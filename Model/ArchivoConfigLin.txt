@@ -1,0 +1,8 @@
+Archivo de configuracion:
+DirImgIn: /home/alejolinux/Escritorio/NUEVO/Outputs/W0001/0_Mediana
+DirImgMedianOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//0_Mediana/
+DirImgRegGrowOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//1.0_RegionGrowing/
+DirImgRegGrowClosingOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//1.1_Closing2.4mm/
+DirImgMediastinumOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//3.Mediastino/
+DirImgInterestRegOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//2.RegionInteres/
+DirImgMajorVesselsOut: //home//alejolinux//Escritorio//NUEVO//Outputs//W0001//4.MajorVessels/
