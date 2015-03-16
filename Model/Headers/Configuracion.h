@@ -21,6 +21,7 @@ private:
     string ruta_majorVessels;
     string ruta_PeripheralVesselsInt;
     string ruta_PeripheralVesselsDist;
+	string ruta_MediastinoDiafragma;
 
 
 public:
@@ -37,5 +38,6 @@ public:
     const string& GetRutaMajorVessels() const;
     const string& GetRutaPeripheralVesselsInt() const;
     const string& GetRutaPeripheralVesselsDist() const;
+	const string& GetRutaMediastinoDiafragma() const;
 
 };

@@ -10,7 +10,7 @@ Configuracion::Configuracion()
 	stringstream linea;
 
 	//entrada.open("C:\\Users\\Alejandro\\Dropbox\\Universidad\\TrabajoGrado2015\\9_CodigoFuenteProyecto\\AlgoritmoTB\\FuentesBouma\\ArchivoConfig.txt", ios::in);
-	entrada.open("../AlgoritmoTB/InterfazDeUsuario/NodulesApp/Model/ArchivoConfig.txt", ios::in);//Se lee la ruta relativa del archivo de configuracion
+	entrada.open("/Users/AlejoMac/Dropbox/Universidad/TrabajoGrado2015/9_CodigoFuenteProyecto/NodulesApp/Model/ArchivoConfig.txt", ios::in);//Se lee la ruta relativa del archivo de configuracion
 	if (!entrada)
 	{
 		cout << "No se pudo cargar archivo"<<endl;
@@ -91,6 +91,11 @@ Configuracion::Configuracion()
 
                 parametro.getline(cad, 200, ' ');//Se lee el valor del parametro
                 this->ruta_mediastinumGeodesic=cad;
+				
+            }else if ((string)cad=="DirImgMediastinumDiafragmaOut:") {
+
+                parametro.getline(cad, 200, ' ');//Se lee el valor del parametro
+                this->ruta_MediastinoDiafragma=cad;
             }
 			
 			
@@ -201,4 +206,7 @@ const string& Configuracion::GetRutaMediastinumGeodesic() const
     return ruta_mediastinumGeodesic;
 }
 
+const string& Configuracion::GetRutaMediastinoDiafragma() const {
+	return ruta_MediastinoDiafragma;
+}
 

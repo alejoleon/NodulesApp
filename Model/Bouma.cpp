@@ -70,11 +70,10 @@ int main()
 	string rutaImgPeriphVesselsInt = config.GetRutaPeripheralVesselsInt();
 	string rutaImgPeriphVesselsDist = config.GetRutaPeripheralVesselsDist();
 	
-	
 	//Se crea un objeto que obtiene las propiedades que se usaran del header de la imagen DICOM
 	DICOMProperties* prop = new DICOMProperties(rutaImgIn);
 	double tamPixel = prop->getPixelValue();
-    prop->printActualValues();
+    //prop->printActualValues();
 
 	//cout<<"valor Pixel :  "<<tamPixel<<endl;
 	
@@ -82,14 +81,15 @@ int main()
 	DICOMIOManage* imagen=new DICOMIOManage();
 	
 
+
 	ReaderType::Pointer readerImIn = imagen->readInputImage(rutaImgIn);
-    ReaderType::Pointer readerImMedian = imagen->readInputImage(rutaImgMedian);
-    ReaderBinaryType::Pointer readerRegGrow = imagen->readInputImageBin(rutaImgRegGrow);
-    ReaderBinaryType::Pointer readerRegGrowClosing = imagen->readInputImageBin(rutaImgRegGrowClosing);
-    ReaderBinaryType::Pointer readerMediastinum = imagen->readInputImageBin(rutaImgMediastinum);
-    ReaderBinaryType::Pointer readerMediastinumOpen = imagen->readInputImageBin(rutaImgMediastinumOpen);
+	ReaderType::Pointer readerImMedian = imagen->readInputImage(rutaImgMedian);
+	ReaderBinaryType::Pointer readerRegGrow = imagen->readInputImageBin(rutaImgRegGrow);
+	ReaderBinaryType::Pointer readerRegGrowClosing = imagen->readInputImageBin(rutaImgRegGrowClosing);
+	ReaderBinaryType::Pointer readerMediastinum = imagen->readInputImageBin(rutaImgMediastinum);
+	ReaderBinaryType::Pointer readerMediastinumOpen = imagen->readInputImageBin(rutaImgMediastinumOpen);
     //ReaderBinaryType::Pointer readerMediastinumGeodesic = imagen->readInputImageBin(rutaImgMediastinumGeodesic);
-    ReaderBinaryType::Pointer readerInterestRegion = imagen->readInputImageBin(rutaImgInterestReg);
+	ReaderBinaryType::Pointer readerInterestRegion = imagen->readInputImageBin(rutaImgInterestReg);
 	//ReaderBinaryType::Pointer readerMajorVessels = imagen->readInputImageBin(rutaImgMajorVessels); 
 	//ReaderBinaryType::Pointer readerPeriphVesselsInt = imagen->readInputImageBin(rutaImgPeriphVesselsInt);
 	//ReaderBinaryType::Pointer readerPeriphVesselsDist = imagen->readInputImageBin(rutaImgPeriphVesselsDist);
@@ -129,17 +129,6 @@ int main()
 	
 	
 	//imprimirImagen(readerImIn);
-
-
-/*
-	ImageBinaryType::Pointer prueba = ImageBinaryType::New();
-	
-	boumaMet->createInterestRegion(imagenfiltradaMediana,interestRegion,prueba);
-	
-		//-->Se crean las imagenes de salida
-	imagen->SetNameOutputFiles("prueba");
-	imagen->writeDicomFile(prueba,"/Users/AlejoMac/Escritorio/PP");
-	*/
 
 
 /*
@@ -273,14 +262,14 @@ int main()
 	imagen->writeDicomFile(periphVesselsInt,rutaImgPeriphVesselsInt);
 */	
 	
-/*
+
 	//Para mostrar en VTK
     //VTKVisualization* vtkVis= new VTKVisualization();
-    vtkVis->SetDir1(rutaImgMedian);
+    vtkVis->SetDir1(rutaImgIn);
     //vtkVis->SetDir1("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/dddd");
-    vtkVis->SetDir2(rutaImgMajorVessels);
-    vtkVis->readImages(imagenfiltradaMediana,imageMajorVessels);
-    */
+    vtkVis->SetDir2(rutaImgMediastinumOpen);
+    vtkVis->readImages(imageIn,imageMediastinumOpen);
+
 	 return 0 ;
 }
 

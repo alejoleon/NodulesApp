@@ -74,7 +74,7 @@ void DICOMProperties::loadValues(){
     DictionaryType::ConstIterator end = dictionary.End();
 
 
-    cout << endl << endl << "---VALORES DEL METADATA---" << endl;
+   //cout << endl << endl << "---VALORES DEL METADATA---" << endl;
     while (itr != end)
     {
         itk::MetaDataObjectBase::Pointer  entry = itr->second;

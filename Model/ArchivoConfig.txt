@@ -5,7 +5,8 @@ DirImgRegGrowOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W000
 DirImgRegGrowClosingOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/1.1_Closing2.4mm
 DirImgMediastinumOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.0.Mediastino
 DirImgMediastinumOpenOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.1.MediastinoOpening
-DirImgMediastinumGeodesicOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.3.MediastinoGeodesic
+DirImgMediastinumGeodesicOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.5.MediastinoGeodesic
+DirImgMediastinumDiafragmaOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.4.MediastinoSinDiafragma
 DirImgInterestRegOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.3.RegionInteres
 DirImgMajorVesselsOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/4.MajorVessels
 DirImgPerVesselsIntOut: /Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/5.1PeripheralVesselsInten

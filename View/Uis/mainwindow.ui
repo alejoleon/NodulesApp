@@ -160,7 +160,7 @@
   <action name="action_Histogram">
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
-     <normaloff>:/Icons/Icons/histograma.jpg</normaloff>:/Icons/Icons/histograma.jpg</iconset>
+     <normaloff>:/Icons/Icons/histograma.png</normaloff>:/Icons/Icons/histograma.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Histogram</string>
