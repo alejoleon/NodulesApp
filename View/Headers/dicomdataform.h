@@ -15,7 +15,6 @@ class DicomDataForm : public QWidget
 public:
     explicit DicomDataForm(QWidget *parent = 0);
     ~DicomDataForm();
-
     void setNombre(string);
 
 private:

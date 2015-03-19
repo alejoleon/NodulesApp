@@ -1,66 +1,104 @@
-#include "Coordinator.h"
+#include "coordinator.h"
 
-/**
- * @brief Coordinator::Coordinator Constructor por defecto.
- */
 Coordinator::Coordinator()
 {
     this->dicomIOmanage = new DICOMIOManage();
-    actualImage =   ReaderType::New();
+    this->imageFilters = new ImageFilters();
+    this->config = new Configuracion();
+    this->currentImage =   ImageType::New();
+
+    this->readerImageIn = ReaderType::New();
+    this->imageIn = ImageType::New();
+    this->imageMedian = ImageType::New();
+    this->imageLungsMask = ImageBinaryType::New();
+    //Para borrar luego:
+    this->dirImgMedian = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/SalidasQT/0.1_median";
+    this->dirImgLungsMask = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/SalidasQT/1.0_LungsMask";
 }
 
-/**
- * @brief Coordinator::~Coordinator Destructor
- */
 Coordinator::~Coordinator()
 {
 }
 
-/**
- * @brief Coordinator::getVtkImageReader Se obtiene un apuntador a una imagen de tipo VTK reader.
- * @param path String, ruta donde está el directorio que contiene las imágenes DICOM.
- * @return vtkSmartPointer< vtkDICOMImageReader >, apuntador a imágen de tipo VTK reader.
- */
 vtkSmartPointer< vtkDICOMImageReader > Coordinator:: getVtkImageReader(string path){
     return this->dicomIOmanage->getVtkImageReader(path);
 }
 
-/**
- * @brief Coordinator::getItkImage Se obtiene un apuntador a una imagen de tipo ITK reader.
- * @param path Ruta donde está el directorio que contiene las imágenes DICOM.
- * @return Apuntador a imágen de tipo ITK reader.
- */
-ReaderType::Pointer Coordinator::getItkImage(string path){
-
-    this->actualImage = this->dicomIOmanage->getItkImage(path);
-    return this->dicomIOmanage->getItkImage(path);
-}
-
-/**
- * @brief Coordinator::castImageItkToVtk Convierte una imagen de tipo ITK a una imagen de tipo VTK
- * @param imageIn ImageType::Pointer, apuntador a imagen de tipo ITK.
- * @param imageOut vtkImageData*, apuntador a imagen de tipo VTK.
- */
-void  Coordinator::castImageItkToVtk (ImageType::Pointer imageIn, vtkImageData* &imageOut){
-    this->dicomIOmanage->castImageItkToVtk(imageIn,imageOut);
-}
-
-/**
- * @brief Coordinator::getHistogramData Retorna el histograma de la imagen actual en un vector, ademas retorna el valor correspondientes al mínimo y máximo valor de gris del histograma.
- * @param lower int, correspondiente al mínimo valor de gris en el histograma.
- * @param upper int, correspondiente al mínimo valor de gris en el histograma.
- * @return vector<int>, histograma de la imagen actua.
- */
 vector<int> Coordinator::getHistogramData (int & lower , int & upper){
 
     typedef itk::Statistics::ImageToHistogramFilter< ImageType > ImageToHistogramFilterType;
 
-    lower = this->utils->getMinimumValue(this->actualImage->GetOutput());
-    upper = this->utils->getMaximumValue(this->actualImage->GetOutput());
+    lower = this->utils->getMinimumValue(this->currentImage);
+    upper = this->utils->getMaximumValue(this->currentImage);
 
-    ImageToHistogramFilterType::Pointer hist = this->utils->histogram(this->actualImage->GetOutput());
+    ImageToHistogramFilterType::Pointer hist = this->utils->histogram(this->currentImage);
 
     vector<int> data = this->utils->histogramFilterToVector(hist);
 
     return data;
+}
+
+void Coordinator::setCurrentImage (int image){
+
+    typedef itk::CastImageFilter< ImageBinaryType, ImageType > CastFilterType;
+    CastFilterType::Pointer castFilter = CastFilterType::New();
+
+    switch (image){
+    case 1:
+        currentImage = imageIn;
+        break;
+    case 2:
+        currentImage = imageMedian;
+        break;
+    case 3:
+        castFilter->SetInput(imageLungsMask);
+        castFilter->Update();
+        currentImage = castFilter->GetOutput();
+        break;
+    default:
+        currentImage = imageIn;
+        break;
+    }
+}
+
+const string Coordinator::getImageIn(){
+    return this->dirImgIn;
+}
+
+void Coordinator::setImageIn(string dirImgIn){
+    this->dirImgIn = dirImgIn;
+
+    readerImageIn = this->dicomIOmanage->readInputImage(this->dirImgIn);
+    imageIn = readerImageIn->GetOutput();
+
+    currentImage = imageIn;
+}
+
+
+const string Coordinator::getImageMedian(){
+    return this->dirImgMedian;
+}
+
+const string Coordinator::getImageLungsMask(){
+    return this->dirImgLungsMask;
+}
+
+const string Coordinator::doMedian (int radius){
+
+    this->imageFilters->filtroMediana(imageIn, radius , imageMedian );
+    //Se crea la imagen de mediana en el disco.
+    this->dicomIOmanage->SetNameOutputFiles("Median");
+    this->dicomIOmanage->writeDicomFile(imageMedian , this->dirImgMedian);
+
+    return this->dirImgMedian;
+}
+
+const string Coordinator::doLungsMask(float seeds[]){
+
+    this->boumaMethods->createLungsRegion(imageMedian , imageLungsMask , seeds , -2000 , -500);
+     //Se crea la imagen de máscara de pulmones en el disco.
+    this->dicomIOmanage->SetNameOutputFiles("LungsMask");
+    this->dicomIOmanage->writeDicomFile(imageLungsMask , this->dirImgLungsMask);
+
+    return this->dirImgLungsMask;
 }

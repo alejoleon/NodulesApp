@@ -16,7 +16,7 @@
 #include <vtkContextScene.h>
 
 //Coordinador
-#include "Coordinator.h"
+#include "coordinator.h"
 
 //VTK
 #include <vtkRenderer.h>
@@ -40,7 +40,7 @@ public:
     void setHistogram(vector<int> hist);
     void setLowerValue(int lowerValue);
     void setUpperValue(int upperValue);
-    void setCoordinator (Coordinator * coordinator);
+    void setCoordinator (Coordinator * &coordinator);
 
 private:
     void changeHistogramBarView(int minValue , int maxValue );

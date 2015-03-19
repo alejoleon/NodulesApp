@@ -235,3 +235,78 @@ void ImageFilters::dilateFilter(ImageType::Pointer input,ImageType::Pointer &out
 	output = dilateFilter->GetOutput();
 	
 }
+
+
+/**
+ * @brief ImageFilters::clipBinaryVolume Recorta una imagen binaria, eliminando todos los slices del rango pasado por parametro, en la vista indicada.
+ * @param inputIm Imagen de entrada que se va a recortar.
+ * @param output Imagen donde se guarda la salida del método.
+ * @param initialCoord Coordenada inicial desde la cual se empiezan a eliminar slices.
+ * @param endCoord Coordenada final hasta la cual se eliminarán slices.
+ * @param plane Vista o proyección que se va a recortar.1:Vista sagital ,2: Vista Coronal, 3: Vista Transversal.
+ */
+void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBinaryType::Pointer &output, int initialCoord, int endCoord, int plane){
+
+    typedef itk::ImageDuplicator< ImageBinaryType > DuplicatorType;
+    DuplicatorType::Pointer duplicatorIm = DuplicatorType::New();
+    duplicatorIm->SetInputImage(inputIm);
+    duplicatorIm->Update();
+    output = duplicatorIm->GetOutput();
+
+    //Se obtiene el tamaño de cada uno de los planos.
+    ImageBinaryType::SizeType size = output->GetLargestPossibleRegion().GetSize();
+
+    int xin, yin, zin, xend, yend, zend;
+
+    switch (plane) {
+    case 1:
+        xin = initialCoord;//size[0]-endCoord;
+        xend = endCoord;//size[0]-initialCoord;
+        yin = 0;
+        yend = size[1];
+        zin = 0;
+        zend = size[2];
+        break;
+    case 2:
+        xin = 0;
+        xend = size[0];
+        yin = size[1]-endCoord; //initialCoord;
+        yend = size[1]-initialCoord; //endCoord;
+        zin = 0;
+        zend = size[2];
+        break;
+    case 3:
+        xin = 0;
+        xend = size[0];
+        yin = 0;
+        yend = size[1];
+        zin = size[2]-endCoord; //initialCoord;
+        zend = size[2]-initialCoord; //endCoord;
+        break;
+    default:
+        xin = 0;
+        xend = 0;
+        yin = 0;
+        yend = 0;
+        zin = 0;
+        zend = 0;
+        break;
+    }
+
+    cout<<"IN " <<yin<<endl<<"END "<<yend<<endl;
+    for (int i = xin ; i < xend ; i++)
+    {
+        for (int j = yin ; j < yend; j++)
+        {
+            for (int k = zin ; k < zend; k++)
+            {
+                ImageBinaryType::IndexType currentIndex;
+                currentIndex[0] = i;
+                currentIndex[1] = j;
+                currentIndex[2] = k;
+
+                output->SetPixel(currentIndex, char (0));
+            }
+        }
+    }
+}

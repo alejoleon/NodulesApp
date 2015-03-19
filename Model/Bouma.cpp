@@ -24,8 +24,13 @@
 #include "ImageProcessingUtils.h"
 
 
-//Para duplicar una imagen.
-#include "itkImageDuplicator.h"
+
+//Pruebas
+#include "itkApproximateSignedDistanceMapImageFilter.h"
+
+
+
+
 
 //Definicion de variables de Histograma
 typedef itk::Statistics::ImageToHistogramFilter< ImageType > ImageToHistogramFilterType;
@@ -65,7 +70,8 @@ int main()
     string rutaImgMediastinum = config.GetRutaMediastinum();
     string rutaImgMediastinumOpen = config.GetRutaMediastinumOpen();
     string rutaImgMediastinumGeodesic = config.GetRutaMediastinumGeodesic();
-	string rutaImgInterestReg = config.GetRutaInterestRegion();
+    string rutaImgMediastinumDiafrag = config.GetRutaMediastinoDiafragma();
+    string rutaImgInterestReg = config.GetRutaInterestRegion();
 	string rutaImgMajorVessels = config.GetRutaMajorVessels();
 	string rutaImgPeriphVesselsInt = config.GetRutaPeripheralVesselsInt();
 	string rutaImgPeriphVesselsDist = config.GetRutaPeripheralVesselsDist();
@@ -81,44 +87,72 @@ int main()
 	DICOMIOManage* imagen=new DICOMIOManage();
 	
 
-
-	ReaderType::Pointer readerImIn = imagen->readInputImage(rutaImgIn);
-	ReaderType::Pointer readerImMedian = imagen->readInputImage(rutaImgMedian);
-	ReaderBinaryType::Pointer readerRegGrow = imagen->readInputImageBin(rutaImgRegGrow);
-	ReaderBinaryType::Pointer readerRegGrowClosing = imagen->readInputImageBin(rutaImgRegGrowClosing);
-	ReaderBinaryType::Pointer readerMediastinum = imagen->readInputImageBin(rutaImgMediastinum);
-	ReaderBinaryType::Pointer readerMediastinumOpen = imagen->readInputImageBin(rutaImgMediastinumOpen);
-    //ReaderBinaryType::Pointer readerMediastinumGeodesic = imagen->readInputImageBin(rutaImgMediastinumGeodesic);
-	ReaderBinaryType::Pointer readerInterestRegion = imagen->readInputImageBin(rutaImgInterestReg);
-	//ReaderBinaryType::Pointer readerMajorVessels = imagen->readInputImageBin(rutaImgMajorVessels); 
-	//ReaderBinaryType::Pointer readerPeriphVesselsInt = imagen->readInputImageBin(rutaImgPeriphVesselsInt);
-	//ReaderBinaryType::Pointer readerPeriphVesselsDist = imagen->readInputImageBin(rutaImgPeriphVesselsDist);
-	
-	//Variables donde se guardaran las imagenes:
-	ImageType::Pointer imageIn = ImageType::New();
-	ImageType::Pointer imagenfiltradaMediana = ImageType::New();
+    //Variables donde se guardaran las imagenes:
+    ImageType::Pointer imageIn = ImageType::New();
+    ImageType::Pointer imagenfiltradaMediana = ImageType::New();
     ImageBinaryType::Pointer imageLungs = ImageBinaryType::New();
     ImageBinaryType::Pointer imageLungsAfterClosing = ImageBinaryType::New();
     ImageBinaryType::Pointer imageMediastinum = ImageBinaryType::New();
     ImageBinaryType::Pointer imageMediastinumOpen = ImageBinaryType::New();
     ImageBinaryType::Pointer imageMediastinumGeodesic = ImageBinaryType::New();
+    ImageBinaryType::Pointer imageMediastinumDiafrag = ImageBinaryType::New();
     ImageBinaryType::Pointer imageInterestRegion = ImageBinaryType::New();
     ImageBinaryType::Pointer imageMajorVessels = ImageBinaryType::New();
-	ImageBinaryType::Pointer periphVesselsInt = ImageBinaryType::New();
-	ImageBinaryType::Pointer periphVesselsDist = ImageBinaryType::New();
-	
-	//Se le da valores a las imagenes
-	imageIn = readerImIn->GetOutput();
+    ImageBinaryType::Pointer periphVesselsInt = ImageBinaryType::New();
+    ImageBinaryType::Pointer periphVesselsDist = ImageBinaryType::New();
+
+
+
+
+    ReaderType::Pointer readerImIn = imagen->readInputImage(rutaImgIn);
+    imageIn = readerImIn->GetOutput();
+
+    ReaderType::Pointer readerImMedian = imagen->readInputImage(rutaImgMedian);
     imagenfiltradaMediana = readerImMedian->GetOutput();
+
+    ReaderBinaryType::Pointer readerRegGrow = imagen->readInputImageBin(rutaImgRegGrow);
     imageLungs = readerRegGrow->GetOutput();
+
+    ReaderBinaryType::Pointer readerRegGrowClosing = imagen->readInputImageBin(rutaImgRegGrowClosing);
     imageLungsAfterClosing = readerRegGrowClosing->GetOutput();
+
+    ReaderBinaryType::Pointer readerMediastinum = imagen->readInputImageBin(rutaImgMediastinum);
     imageMediastinum = readerMediastinum->GetOutput();
+
+    ReaderBinaryType::Pointer readerMediastinumOpen = imagen->readInputImageBin(rutaImgMediastinumOpen);
     imageMediastinumOpen = readerMediastinumOpen->GetOutput();
+
+    //ReaderBinaryType::Pointer readerMediastinumGeodesic = imagen->readInputImageBin(rutaImgMediastinumGeodesic);
+    //ReaderBinaryType::Pointer readerMediastinumDiafrag = imagen->readInputImageBin(rutaImgMediastinumDiafrag);
+    //ReaderBinaryType::Pointer readerInterestRegion = imagen->readInputImageBin(rutaImgInterestReg);
+	//ReaderBinaryType::Pointer readerMajorVessels = imagen->readInputImageBin(rutaImgMajorVessels); 
+	//ReaderBinaryType::Pointer readerPeriphVesselsInt = imagen->readInputImageBin(rutaImgPeriphVesselsInt);
+	//ReaderBinaryType::Pointer readerPeriphVesselsDist = imagen->readInputImageBin(rutaImgPeriphVesselsDist);
+	
+
+    //Se le da valores a las imagenes
+
+
+
+
+
+
+
     //imageMediastinumGeodesic = readerMediastinumGeodesic->GetOutput();
-    imageInterestRegion = readerInterestRegion->GetOutput();
-	//majorVessels = readerMajorVessels->GetOutput();
-	//periphVesselsInt = readerPeriphVesselsInt->GetOutput();
-	//periphVesselsDist = readerPeriphVesselsDist->GetOutput();
+    //imageMediastinumDiafrag = readerMediastinumDiafrag->GetOutput();
+    //imageInterestRegion = readerInterestRegion->GetOutput();
+    //majorVessels = readerMajorVessels->GetOutput();
+    //periphVesselsInt = readerPeriphVesselsInt->GetOutput();
+    //periphVesselsDist = readerPeriphVesselsDist->GetOutput();
+
+
+
+
+
+
+
+
+
 	
 	//Objetos necesarios.
 	ImageFilters* filters = new ImageFilters();
@@ -236,6 +270,19 @@ int main()
     imagen->writeDicomFile(imageMediastinumOpen,rutaImgMediastinumOpen);
 */
 
+    /*
+    //2.2 Mediastino: corte del diafragma
+    ImageBinaryType::SizeType size = imageMediastinumOpen->GetLargestPossibleRegion().GetSize();
+    cout<<"Tamaño X :"<<size[0]<<endl;
+    cout<<"Tamaño Y :"<<size[1]<<endl;
+    cout<<"Tamaño Z :"<<size[2]<<endl;
+
+    filters->clipBinaryVolume(imageMediastinumOpen, imageMediastinumDiafrag, 203 , 276 , 1);
+    //-->Se crean las imagenes de salida
+    imagen->SetNameOutputFiles("OutMediastinumDiafrag");
+    imagen->writeDicomFile(imageMediastinumDiafrag,rutaImgMediastinumDiafrag);
+*/
+
 /*
     //2.3 Region de interes
     //Se suman las dos imagenes (pulmones y mediastino) para obtener la máscara del área de interés.
@@ -261,48 +308,32 @@ int main()
 	imagen->SetNameOutputFiles("OutPeriphInt");
 	imagen->writeDicomFile(periphVesselsInt,rutaImgPeriphVesselsInt);
 */	
-	
 
-	//Para mostrar en VTK
+
+
+cout<<"inicio"<<endl;
+    //Mapa de distancia.
+
+    typedef itk::Image<float, 3>          FloatImageType;
+    typedef  itk::ApproximateSignedDistanceMapImageFilter< ImageBinaryType, FloatImageType  > ApproximateSignedDistanceMapImageFilterType;
+    ApproximateSignedDistanceMapImageFilterType::Pointer approximateSignedDistanceMapImageFilter = ApproximateSignedDistanceMapImageFilterType::New();
+    approximateSignedDistanceMapImageFilter->SetInput(imageMediastinumOpen);
+    approximateSignedDistanceMapImageFilter->SetInsideValue(255);
+    approximateSignedDistanceMapImageFilter->SetOutsideValue(0);
+    approximateSignedDistanceMapImageFilter->Update();
+    FloatImageType::Pointer mapa = approximateSignedDistanceMapImageFilter->GetOutput();
+    //-->Se crean las imagenes de salida
+    imagen->SetNameOutputFiles("Prueba");
+    imagen->writeDicomFile(mapa,rutaImgPeriphVesselsDist);
+
+
+    cout<<"YA"<<endl;
+    //Para mostrar en VTK
     //VTKVisualization* vtkVis= new VTKVisualization();
-    vtkVis->SetDir1(rutaImgIn);
+    //vtkVis->SetDir1(rutaImgIn);
     //vtkVis->SetDir1("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/dddd");
-    vtkVis->SetDir2(rutaImgMediastinumOpen);
-    vtkVis->readImages(imageIn,imageMediastinumOpen);
+    //vtkVis->SetDir2(rutaImgMediastinumDiafrag);
+    //vtkVis->readImages(imageMediastinumDiafrag);
 
 	 return 0 ;
-}
-
-
-void imprimirImagen(ReaderType::Pointer reader){
-	ImageBinaryType::SizeType sizeLung = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-	
-	signed short max=0;
-	signed short min=10000;
-	
-	
-	for (int i=0 ; i< sizeLung[0] ; i++)
-	{
-		for (int j=0; j< sizeLung[1]; j++)
-		{
-			for (int k=0; k<sizeLung [2]; k++)
-			{
-				ImageType::IndexType currentIndexLung;
-				currentIndexLung[0] = i;
-				currentIndexLung[1] = j;
-				currentIndexLung[2] = k; 
-				ImageType::PixelType currentValueOut = reader->GetOutput()->GetPixel(currentIndexLung);
-				//cout<<(int)currentValueOut<<",";
-				if (currentValueOut<min){
-					min=currentValueOut;
-				}
-				if (currentValueOut>max){
-					max=currentValueOut;
-				}
-			}	
-		}
-	}
-	
-	cout<<" MAXIM "<<max<<endl;
-	cout<<" MINIM "<<min<<endl;
 }

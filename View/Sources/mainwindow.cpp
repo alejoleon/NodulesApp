@@ -2,10 +2,6 @@
 #include "ui_mainwindow.h"
 
 
-/**
- * @brief MainWindow::MainWindow Constructor por defecto.
- * @param parent Padre que crea esta ventana.
- */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -19,29 +15,22 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->action_Volume_View->setCheckable(true);
     this->ui->action_Transversal_view->setCheckable(true);
     this->ui->action_All_views->setChecked(true);
+    this->ui->action_Algorithm->setCheckable(true);
 
+    this->ui->widgetAlgorithm->setVisible(false);
+    this->mw = this;
+    this->ui->widgetAlgorithm->setMainWindow(mw);
 }
 
-/**
- * @brief MainWindow::~MainWindow Destructor.
- */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-/**
- * @brief MainWindow::setCoordinator Asigna el coordinador al objeto de esta clase.
- * @param coordinator Coordinador.
- */
 void MainWindow::setCoordinator (Coordinator * &coordinator){
     this->coordinator = coordinator;
 }
 
-/**
- * @brief MainWindow::on_actionSave_as_triggered Acción para el evento de "guardar como".
- * @return
- */
 bool MainWindow::on_actionSave_as_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(
@@ -57,10 +46,6 @@ bool MainWindow::on_actionSave_as_triggered()
     return false;
 }
 
-/**
- * @brief MainWindow::saveFile Acción para el evento "guardar"
- * @return
- */
 bool MainWindow::saveFile()
 {
     QFile file(curFile);
@@ -106,25 +91,20 @@ bool MainWindow::on_action_Save_triggered()
     }
 }
 
-
-/**
- * @brief MainWindow::on_action_Open_triggered Acción para el evento de abrir.
- */
 void MainWindow::on_action_Open_triggered()
 {
-    if(maybeSave()){
+    //if(maybeSave()){
         QString fileName = QFileDialog::getExistingDirectory(
                     this,
                     "NodulesApp - Open file",
-                    "../../",
+                    "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001",
                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
         if (!fileName.isEmpty()){
             QDir file (fileName);
             if (file.exists()){
-                cout<<"Se hace la operacion para abir el archivo"<<endl;
-                cout<<"Ruta que se abre: "<<fileName.toStdString()<<endl;
-                this->pathImage = fileName.toStdString();
-                this->setUpImages(this->pathImage);
+                this->setUpImages(fileName.toStdString());
+                this->coordinator->setImageIn(fileName.toStdString());
+
             }else {
                 QMessageBox::warning(
                             this,
@@ -134,20 +114,13 @@ void MainWindow::on_action_Open_triggered()
             }
 
         }
-    }
+    //}
 }
 
-/**
- * @brief MainWindow::setUpImages Evento para visualizar las imágenes DICOM a partir de la ruta obtenida al abrir un archivo.
- * @param dirDICOMImg Ruta donde se encuentra el directorio de imágenes DICOM.
- */
 void MainWindow::setUpImages(string dirDICOMImg){
     this->ui->fourPanelWidget->setUpImages(dirDICOMImg);
 }
 
-/**
- * @brief MainWindow::on_action_Histogram_triggered Crea una nueva ventana de histograma de la imagen actual.
- */
 void MainWindow::on_action_Histogram_triggered()
 {
     int lower,upper;
@@ -159,23 +132,19 @@ void MainWindow::on_action_Histogram_triggered()
     histWindow->show();
 }
 
-
 void MainWindow::on_prueba_clicked()
 {
     this->setUpImages("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.0.Mediastino");
 }
 
-/**
- * @brief MainWindow::setCoordinator Asigna el coordinador al objeto de esta clase.
- * @param coordinator Coordinador.
- */
 void MainWindow::setCoordinatorFourPanel(Coordinator * &coordinator){
     this->ui->fourPanelWidget->setCoordinator(coordinator);
 }
 
-/**
- * @brief MainWindow::on_action_Transversal_view_triggered Cuando se presiona el botón de Vista Transversal se muestra únicamente dicha vista, mientras que las otras 3 se ocultan.
- */
+void MainWindow::setCoordinatorAlgorithmForm(Coordinator * &coordinator){
+    this->ui->widgetAlgorithm->setCoordinator(coordinator);
+}
+
 void MainWindow::on_action_Transversal_view_triggered()
 {
     this->ui->actionCoronal_view->setChecked(false);
@@ -187,9 +156,6 @@ void MainWindow::on_action_Transversal_view_triggered()
     this->ui->fourPanelWidget->modifyViews(1);
 }
 
-/**
- * @brief MainWindow::on_actionCoronal_view_triggered Cuando se presiona el botón de Vista Coronal se muestra únicamente dicha vista, mientras que las otras 3 se ocultan.
- */
 void MainWindow::on_actionCoronal_view_triggered()
 {
     this->ui->actionCoronal_view->setChecked(true);
@@ -201,9 +167,6 @@ void MainWindow::on_actionCoronal_view_triggered()
     this->ui->fourPanelWidget->modifyViews(2);
 }
 
-/**
- * @brief MainWindow::on_action_Sagital_view_triggered Cuando se presiona el botón de Vista Sagital se muestra únicamente dicha vista, mientras que las otras 3 se ocultan.
- */
 void MainWindow::on_action_Sagital_view_triggered()
 {
     this->ui->actionCoronal_view->setChecked(false);
@@ -215,9 +178,6 @@ void MainWindow::on_action_Sagital_view_triggered()
     this->ui->fourPanelWidget->modifyViews(3);
 }
 
-/**
- * @brief MainWindow::on_action_Volume_View_triggered Cuando se presiona el botón de Vista de Volumen se muestra únicamente dicha vista, mientras que las otras 3 se ocultan.
- */
 void MainWindow::on_action_Volume_View_triggered()
 {
     this->ui->actionCoronal_view->setChecked(false);
@@ -229,9 +189,6 @@ void MainWindow::on_action_Volume_View_triggered()
     this->ui->fourPanelWidget->modifyViews(4);
 }
 
-/**
- * @brief MainWindow::on_action_All_views_triggered Cuando se presiona el botón de Todas las Vistas, se muestran las 4 vistas.
- */
 void MainWindow::on_action_All_views_triggered()
 {
     this->ui->actionCoronal_view->setChecked(false);
@@ -241,4 +198,16 @@ void MainWindow::on_action_All_views_triggered()
     this->ui->action_All_views->setChecked(true);
 
     this->ui->fourPanelWidget->modifyViews(5);
+}
+
+void MainWindow::on_action_Algorithm_triggered()
+{
+    if (this->ui->action_Algorithm->isChecked()) {
+        this->ui->widgetDataInfo->setVisible(false);
+        this->ui->widgetAlgorithm->setVisible(true);
+    }
+    else {
+        this->ui->widgetDataInfo->setVisible(true);
+        this->ui->widgetAlgorithm->setVisible(false);
+    }
 }

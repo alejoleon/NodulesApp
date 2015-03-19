@@ -19,25 +19,39 @@
 #include <itkImageToVTKImageFilter.h>
 #include <vtkImageData.h>
 
+//Conversion vtk-itk
+#include <itkVTKImageToImageFilter.h>
+
+
+
 
 
 typedef itk::NumericSeriesFileNames OutputNamesGeneratorType;
 
 
-//Definicion de imagen de entrada
+//Definición de imagen de entrada.
 typedef signed short PixelType;
 const unsigned int DimensionDM= 3;
 typedef itk::Image<PixelType, DimensionDM> ImageType;
 typedef itk::ImageSeriesReader<ImageType> ReaderType;
 
-//Definicion de Imagenes DICOM
+//Definición de Imagenes DICOM.
 typedef itk::GDCMImageIO ImageIOType;
 typedef itk::GDCMSeriesFileNames NamesGeneratorType;
 
-//Definiciion de imagen Binaria
+//Definición de imagen Binaria.
 typedef unsigned char   PixelBinaryType;
 typedef itk::Image<PixelBinaryType, DimensionDM> ImageBinaryType;
 typedef itk::ImageSeriesReader< ImageBinaryType > ReaderBinaryType;
+
+//Definición del diccionario de metadatos.
+typedef itk::MetaDataDictionary *           DictionaryRawPointer;
+typedef std::vector< DictionaryRawPointer > DictionaryArrayType;
+typedef const DictionaryArrayType *         DictionaryArrayRawPointer;
+
+//Definición de mapas de distancias
+typedef itk::Image<float, 3>          ImageFloatType;
+
 
 
 using namespace std;
@@ -48,11 +62,13 @@ private:
     string nameOutputFiles;
     int inputSize;
 
-    //Para guardar los metadatos de la imagen de entrada y ponerlos en la imagen de salida
-	ReaderType::Pointer reader;
-    ReaderBinaryType::Pointer readerBinary;
+    /**
+     * @brief dictionary Diccionario de metadatos que se obtienen a partir de la imagen que se abre y que se utiliza al momento de guardar o escribir una imagen DICOM.
+     */
+     DictionaryArrayRawPointer dictionary;
 
 public:
+
     DICOMIOManage();
     ~DICOMIOManage();
 
@@ -62,11 +78,9 @@ public:
     ReaderType::Pointer getItkImage(string path);
     vtkSmartPointer< vtkDICOMImageReader > getVtkImageReader(string path);
 
-
-    void castImageItkToVtk (ImageType::Pointer imageIn, vtkImageData* &imageOut);
-
     void writeDicomFile(ImageType::Pointer image, string outputDirectory);
 	void writeDicomFile (ImageBinaryType::Pointer image,string outputDirectory);
+    void writeDicomFile (ImageFloatType::Pointer image,string outputDirectory);
 
     void SetNameOutputFiles(const string& nameOutputFiles);
     const string& GetNameOutputFiles() const;

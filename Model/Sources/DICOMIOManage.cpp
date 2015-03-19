@@ -7,8 +7,7 @@ DICOMIOManage::DICOMIOManage()
 {
 	this->nameOutputFiles = "";
 	this->inputSize = 0;
-	this->reader = ReaderType::New();
-    this->readerBinary = ReaderBinaryType::New();
+
 }
 
 /**
@@ -34,21 +33,12 @@ ReaderBinaryType::Pointer DICOMIOManage:: readInputImageBin(string inputDirector
 	
 	//Guarda el numero de archivos que hay en el directorio de entrada.
 	this->inputSize=(int)filenames.size();
-	
-	//Para imprimir el nombre de los archivos de DICOM
-	/*
-	const unsigned int numberOfFileNames =  filenames.size();
-	cout << numberOfFileNames << endl;
-	
-	for(unsigned int fni = 0; fni < numberOfFileNames; ++fni)
-    {
-		cout << "filename # " << fni << " = ";
-		cout << filenames[fni] << std::endl;
-    }
-	*/
-	
-    readerBinary->SetImageIO( gdcmIO );
+		
+    ReaderBinaryType::Pointer readerBinary = ReaderBinaryType::New();
+    readerBinary->SetImageIO(gdcmIO);
     readerBinary->SetFileNames( filenames );
+
+    dictionary = readerBinary->GetMetaDataDictionaryArray();
 	
 	try
     {
@@ -56,7 +46,7 @@ ReaderBinaryType::Pointer DICOMIOManage:: readInputImageBin(string inputDirector
     }
 	catch (itk::ExceptionObject &excp)
     {
-		std::cerr << "Exception thrown while writing the image" << std::endl;
+        std::cerr << "Exception thrown while reading the image" << std::endl;
 		std::cerr << excp << std::endl;
 		return NULL;
     }
@@ -71,7 +61,7 @@ ReaderBinaryType::Pointer DICOMIOManage:: readInputImageBin(string inputDirector
  * Ejemplo en : http://www.itk.org/Doxygen/html/Examples_2IO_2DicomSeriesReadSeriesWrite_8cxx-example.html
  */
 ReaderType::Pointer DICOMIOManage:: readInputImage(string inputDirectory){
-	
+
 	ImageIOType::Pointer gdcmIO = ImageIOType::New();
 	NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
 	
@@ -81,32 +71,22 @@ ReaderType::Pointer DICOMIOManage:: readInputImage(string inputDirectory){
 	//Guarda el numero de archivos que hay en el directorio de entrada.
 	this->inputSize=(int)filenames.size();
 	
-	//Para imprimir el nombre de los archivos de DICOM
-	/*
-	const unsigned int numberOfFileNames =  filenames.size();
-	cout << numberOfFileNames << endl;
-	
-	for(unsigned int fni = 0; fni < numberOfFileNames; ++fni)
-    {
-		cout << "filename # " << fni << " = ";
-		cout << filenames[fni] << std::endl;
-    }
-	*/
-	
-	reader->SetImageIO( gdcmIO );
-	reader->SetFileNames( filenames );
-	
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetImageIO( gdcmIO);
+    reader->SetFileNames( filenames );
+
+    dictionary = reader->GetMetaDataDictionaryArray();
 	try
     {
-		reader->Update();
+        reader->Update();
     }
 	catch (itk::ExceptionObject &excp)
     {
-		std::cerr << "Exception thrown while writing the image" << std::endl;
+        std::cerr << "Exception thrown while reading the image" << std::endl;
 		std::cerr << excp << std::endl;
 		return NULL;
     }
-	return reader;
+    return reader;
 }
 
 
@@ -143,7 +123,7 @@ void DICOMIOManage:: writeDicomFile (ImageType::Pointer image,string outputPath)
 	seriesFormat = seriesFormat + "/" + name+"%d.dcm";
 	outputNames->SetSeriesFormat (seriesFormat.c_str());
 	outputNames->SetStartIndex (1);
-	outputNames->SetEndIndex (this->GetInputSize());
+    outputNames->SetEndIndex (this->GetInputSize());
  
 	SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
 	//seriesWriter->SetInput( image->GetOutput() );
@@ -151,10 +131,14 @@ void DICOMIOManage:: writeDicomFile (ImageType::Pointer image,string outputPath)
 	ImageIOType::Pointer gdcmIO = ImageIOType::New();
     seriesWriter->SetImageIO( gdcmIO );
     seriesWriter->SetFileNames( outputNames->GetFileNames() );
-    seriesWriter->SetMetaDataDictionaryArray( reader->GetMetaDataDictionaryArray() );
+
+
+    seriesWriter->SetMetaDataDictionaryArray( dictionary);
+
   try
     {
 		seriesWriter->Update();
+
     }
   catch( itk::ExceptionObject & excp )
     {
@@ -204,7 +188,7 @@ void DICOMIOManage:: writeDicomFile (ImageBinaryType::Pointer image,string outpu
 	ImageIOType::Pointer gdcmIO = ImageIOType::New();
     seriesWriter->SetImageIO( gdcmIO );
     seriesWriter->SetFileNames( outputNames->GetFileNames() );
-    seriesWriter->SetMetaDataDictionaryArray( reader->GetMetaDataDictionaryArray() );
+    seriesWriter->SetMetaDataDictionaryArray( dictionary );
   try
     {		
 		seriesWriter->Update();
@@ -216,6 +200,63 @@ void DICOMIOManage:: writeDicomFile (ImageBinaryType::Pointer image,string outpu
 		return;
     }
 }
+
+
+void DICOMIOManage:: writeDicomFile (ImageFloatType::Pointer image,string outputPath){
+
+    string name="";
+
+    if ((this->nameOutputFiles=="")) {
+        name="Img";
+    }
+    else {
+        name=this->nameOutputFiles;
+    }
+
+    typedef signed short    OutputPixelType;
+    const unsigned int      OutputDimension = 2;
+
+    typedef itk::Image< OutputPixelType, OutputDimension >    Image2DType;
+    typedef itk::ImageSeriesWriter<ImageFloatType, Image2DType >  SeriesWriterType;
+
+
+    const char * outputDirectory = outputPath.c_str();
+    itksys::SystemTools::MakeDirectory( outputDirectory);
+
+    // Generate the file names
+    OutputNamesGeneratorType::Pointer outputNames = OutputNamesGeneratorType::New();
+    string seriesFormat(outputDirectory);
+    seriesFormat = seriesFormat + "/" + name+"%d.dcm";
+    outputNames->SetSeriesFormat (seriesFormat.c_str());
+    outputNames->SetStartIndex (1);
+    outputNames->SetEndIndex (this->GetInputSize());
+
+    SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
+    seriesWriter->SetInput(image);
+    ImageIOType::Pointer gdcmIO = ImageIOType::New();
+    seriesWriter->SetImageIO( gdcmIO );
+    seriesWriter->SetFileNames( outputNames->GetFileNames() );
+
+
+    seriesWriter->SetMetaDataDictionaryArray( dictionary );
+  try
+    {
+        seriesWriter->Update();
+    }
+  catch( itk::ExceptionObject & excp )
+    {
+        std::cerr << "Exception thrown while writing the series " << std::endl;
+        std::cerr << excp << std::endl;
+        return;
+    }
+}
+
+
+
+
+
+
+
 
 /**
  * @brief DICOMIOManage::getVtkImageReader Se obtiene una imagen reader de tipo vtk.
@@ -259,33 +300,6 @@ ReaderType::Pointer DICOMIOManage::getItkImage(string path){
     }
 
     return 0;
-}
-
-/**
- * @brief DICOMIOManage::castImageItkToVtk Convierte una imagen ITK en una imagen VTK
- * @param imageIn Apuntador a la imagen de tipo ITK, es la imagen de entrada.
- * @param imageOut Apuntador a la imagen de tipo VTK, es la imagen de salida.
- * Ejemplo: http://itk.org/Wiki/ITK/Examples/IO/ImageToVTKImageFilter
- */
-void DICOMIOManage::castImageItkToVtk (ImageType::Pointer imageIn, vtkImageData* &imageOut){
-    typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
-    ConnectorType::Pointer connector= ConnectorType::New();
-    connector->SetInput( imageIn );
-
-    try
-    {
-        connector->Update();
-    }
-    catch (itk::ExceptionObject & e)
-    {
-        std::cerr << "exception in file reader " << std::endl;
-        std::cerr << e << std::endl;
-        return;
-    }
-
-    imageOut->DeepCopy(connector->GetOutput());
-    //vtkImageData * image = vtkImageData::New();
-    //image->DeepCopy(connector->GetOutput());
 }
 
 

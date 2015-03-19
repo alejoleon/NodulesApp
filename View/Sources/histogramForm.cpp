@@ -70,7 +70,7 @@ HistogramForm::~HistogramForm()
  * @brief HistogramForm::setCoordinator Asigna el coordinador al objeto de esta clase.
  * @param coordinator Coordinador.
  */
-void HistogramForm::setCoordinator (Coordinator * coordinator){
+void HistogramForm::setCoordinator (Coordinator * &coordinator){
     this->coordinator = coordinator;
 }
 

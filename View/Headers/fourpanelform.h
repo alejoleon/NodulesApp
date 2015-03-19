@@ -43,7 +43,7 @@
 
 
 //Coordinador
-#include "Coordinator.h"
+#include "coordinator.h"
 
 
 //Definición de parámetros de imagen DICOM.

@@ -23,7 +23,6 @@ BoumaMethods::~BoumaMethods()
  * @param mediastinum : Variable donde se guardará la segmentación del mediastino.
  * Ejemplo de Duplicar imagen: http://www.itk.org/Wiki/ITK/Examples/SimpleOperations/ImageDuplicator
  */
-
 void BoumaMethods:: rowWiseMethod (ImageType::Pointer imageIn, ImageBinaryType::Pointer lungs, ImageBinaryType::Pointer &interestRegion, ImageBinaryType::Pointer &mediastinum, int upperThreshold) {
 	
 	//Copia de la imagen que sale del filtro de closing

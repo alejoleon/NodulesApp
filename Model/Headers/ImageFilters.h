@@ -61,6 +61,7 @@ public:
 	void maskImage(ImageType::Pointer input,ImageBinaryType::Pointer mask,ImageType::Pointer &output);
 	void erodeFilter(ImageType::Pointer input,ImageType::Pointer &output, int radius);
 	void dilateFilter(ImageType::Pointer input,ImageType::Pointer &output, int radius);
+    void clipBinaryVolume(ImageBinaryType::Pointer input , ImageBinaryType::Pointer &output, int initialCoord, int endCoord, int plane);
   
 };
 

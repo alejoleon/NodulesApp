@@ -118,8 +118,6 @@ FourPanelForm::~FourPanelForm()
  */
 void FourPanelForm::setUpImages(string dirDICOMImg){
 
-      //Reader de la clase ITK de la imagen DICOM
-      ReaderType::Pointer reader1 = this->coordinator->getItkImage(dirDICOMImg);
 
       //Reader de la clase VTK de la imagen DICOM
       vtkSmartPointer< vtkDICOMImageReader > reader = coordinator->getVtkImageReader(dirDICOMImg);
