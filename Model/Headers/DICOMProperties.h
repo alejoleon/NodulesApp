@@ -49,9 +49,11 @@ private:
     map <string, string> dicomTags;
 
 public:
-    DICOMProperties(string direccion);
+    DICOMProperties();
+    DICOMProperties(string path);
     ~DICOMProperties();
 
+    void loadData(string path);
     void loadValues();
     void printMetadata();
     void printActualValues();

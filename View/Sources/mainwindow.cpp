@@ -102,8 +102,8 @@ void MainWindow::on_action_Open_triggered()
         if (!fileName.isEmpty()){
             QDir file (fileName);
             if (file.exists()){
-                this->setUpImages(fileName.toStdString());
                 this->coordinator->setImageIn(fileName.toStdString());
+                this->setUpImages(this->coordinator->getImageIn());
 
             }else {
                 QMessageBox::warning(
@@ -117,8 +117,8 @@ void MainWindow::on_action_Open_triggered()
     //}
 }
 
-void MainWindow::setUpImages(string dirDICOMImg){
-    this->ui->fourPanelWidget->setUpImages(dirDICOMImg);
+void MainWindow::setUpImages(vtkImageData* image){
+    this->ui->fourPanelWidget->setUpImages(image);
 }
 
 void MainWindow::on_action_Histogram_triggered()
@@ -134,7 +134,7 @@ void MainWindow::on_action_Histogram_triggered()
 
 void MainWindow::on_prueba_clicked()
 {
-    this->setUpImages("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.0.Mediastino");
+    this->coordinator->funcionPrueba();
 }
 
 void MainWindow::setCoordinatorFourPanel(Coordinator * &coordinator){

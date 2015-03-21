@@ -116,14 +116,10 @@ FourPanelForm::~FourPanelForm()
  *                                   Con la imágen VTK se muestra la imagen del volumen, mientras que con la imágen ITK se muestran las 3 vistas.
  * @param dirDICOMImg String, ruta donde está el directorio con las imágenes DICOM.
  */
-void FourPanelForm::setUpImages(string dirDICOMImg){
-
-
-      //Reader de la clase VTK de la imagen DICOM
-      vtkSmartPointer< vtkDICOMImageReader > reader = coordinator->getVtkImageReader(dirDICOMImg);
+void FourPanelForm::setUpImages(vtkImageData * image){
 
       int imageDims[3];
-      reader->GetOutput()->GetDimensions(imageDims);
+      image->GetDimensions(imageDims);
 
       for (int i = 0; i < 3; i++)
       {
@@ -148,7 +144,7 @@ void FourPanelForm::setUpImages(string dirDICOMImg){
 
          rep->GetResliceCursorActor()->GetCursorAlgorithm()->SetReslicePlaneNormal(i);
 
-         riw[i]->SetInputData(reader->GetOutput());
+         riw[i]->SetInputData(image);
          riw[i]->SetSliceOrientation(i);
          riw[i]->SetResliceModeToAxisAligned();
       }
@@ -159,6 +155,17 @@ void FourPanelForm::setUpImages(string dirDICOMImg){
       vtkSmartPointer<vtkProperty> ipwProp = vtkSmartPointer<vtkProperty>::New();
 
       vtkSmartPointer< vtkRenderer > ren = vtkSmartPointer< vtkRenderer >::New();
+
+
+      //Si el qvtkwidget4 no tiene algún renderer no se hace nada.
+      //Si el qvtkwidget4 tiene algún renderer, entonces se elimina el anterior y se sigue el proceso.
+      //Es necesario eliminar cualquier otro renderer que exista en el widget, ya que de lo contrario no se podría hacer una interacción con este.
+      if (this->ui->qvtkWindow4->GetRenderWindow()->GetRenderers()->GetFirstRenderer() != NULL){
+          this->ui->qvtkWindow4->GetRenderWindow()->RemoveRenderer(
+                      this->ui->qvtkWindow4->GetRenderWindow()->GetRenderers()->GetFirstRenderer()
+                      );
+      }
+
 
       this->ui->qvtkWindow4->GetRenderWindow()->AddRenderer(ren);
       vtkRenderWindowInteractor *iren = this->ui->qvtkWindow4->GetInteractor();
@@ -182,7 +189,7 @@ void FourPanelForm::setUpImages(string dirDICOMImg){
          planeWidget[i]->SetTexturePlaneProperty(ipwProp);
          planeWidget[i]->TextureInterpolateOff();
          planeWidget[i]->SetResliceInterpolateToLinear();
-         planeWidget[i]->SetInputConnection(reader->GetOutputPort());
+         planeWidget[i]->SetInputData(image);
          planeWidget[i]->SetPlaneOrientation(i);
          planeWidget[i]->SetSliceIndex(imageDims[i]/2);
          planeWidget[i]->DisplayTextOn();
@@ -213,6 +220,7 @@ void FourPanelForm::setUpImages(string dirDICOMImg){
       this->ui->qvtkWindow1->show();
       this->ui->qvtkWindow2->show();
       this->ui->qvtkWindow3->show();
+
 
       //Se asignan los rangos a los ScrollViews y a los SpinBox.
       //Se les asigna un valor +1 para que se inicie desde 1 y no desde 0.

@@ -39,7 +39,7 @@
 #include "itkImageSeriesReader.h"
 
 //VTK images
-#include "vtkDICOMImageReader.h"
+#include "vtkImageData.h"
 
 
 //Coordinador
@@ -69,7 +69,7 @@ public:
     explicit FourPanelForm(QWidget *parent = 0);
     ~FourPanelForm();
 
-    void setUpImages(string dirDICOMImg);
+    void setUpImages(vtkImageData * image);
     void setCoordinator (Coordinator * &coordinator);
     void modifyViews(int view);
 

@@ -6,26 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
-    <height>680</height>
+    <width>806</width>
+    <height>970</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_11">
+  <layout class="QVBoxLayout" name="verticalLayout_15">
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>830</width>
-        <height>654</height>
+        <width>780</width>
+        <height>944</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -540,7 +540,6 @@
          </layout>
          <zorder></zorder>
          <zorder></zorder>
-         <zorder>lb_seed1</zorder>
          <zorder></zorder>
          <zorder></zorder>
         </widget>
@@ -552,55 +551,157 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="0">
+        <widget class="QFrame" name="frameMediastinum">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_14">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_17">
+            <item>
+             <widget class="QLabel" name="lb_MediastinumMask">
+              <property name="text">
+               <string>Mediastinum Mask</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_19">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="gb_clipDiafragma">
+            <property name="title">
+             <string>Clip Diaphragm</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_19">
+             <item>
+              <widget class="QRadioButton" name="rb_ClipMedYes">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rb_clipMedNo">
+               <property name="text">
+                <string>No</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_11">
+            <item>
+             <widget class="QLabel" name="lb_messageDiaphragm">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Select the first and the last slice you want to clip. &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;In order to delete the diaphragm.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_12">
+                <item>
+                 <widget class="QLabel" name="lb_firstSlice">
+                  <property name="text">
+                   <string>First</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="tx_firstSliceClip"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_13">
+                <item>
+                 <widget class="QLabel" name="lb_lastSlice">
+                  <property name="text">
+                   <string>Last</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="tx_lastSliceClip"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_21">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <item>
+             <spacer name="horizontalSpacer_20">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_doMediastinum">
+              <property name="text">
+               <string>Do Mediastinum</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="pb_viewMediastinum">
+         <property name="text">
+          <string>View Mediastinum Mask</string>
+         </property>
+        </widget>
+       </item>
       </layout>
-      <zorder>pb_viewImgIn</zorder>
-      <zorder></zorder>
-      <zorder>pb_viewMedian</zorder>
-      <zorder>frameLungsMask</zorder>
-      <zorder>frameImageIn</zorder>
-      <zorder>pb_viewImgIn</zorder>
-      <zorder>frameMedian</zorder>
-      <zorder>pb_viewLungsMask</zorder>
      </widget>
     </widget>
    </item>
   </layout>
-  <zorder>lb_LungsMaskFrame</zorder>
-  <zorder>horizontalSpacer_5</zorder>
-  <zorder>lb_seed1</zorder>
-  <zorder>tx_seedX1</zorder>
-  <zorder>lb_x1</zorder>
-  <zorder>horizontalSpacer_6</zorder>
-  <zorder>horizontalSpacer_7</zorder>
-  <zorder>lb_y1</zorder>
-  <zorder>horizontalSpacer_8</zorder>
-  <zorder>horizontalSpacer_9</zorder>
-  <zorder>horizontalSpacer_10</zorder>
-  <zorder>horizontalSpacer_11</zorder>
-  <zorder>lb_z1</zorder>
-  <zorder>tx_seedY1</zorder>
-  <zorder>tx_seedZ1</zorder>
-  <zorder>frame</zorder>
-  <zorder>lb_seed2</zorder>
-  <zorder>horizontalSpacer_12</zorder>
-  <zorder>lb_x2</zorder>
-  <zorder>lb_y2</zorder>
-  <zorder>lb_z2</zorder>
-  <zorder>horizontalSpacer_13</zorder>
-  <zorder>horizontalSpacer_14</zorder>
-  <zorder>horizontalSpacer_15</zorder>
-  <zorder>horizontalSpacer_16</zorder>
-  <zorder>horizontalSpacer_17</zorder>
-  <zorder>horizontalSpacer_18</zorder>
-  <zorder>tx_seedX2</zorder>
-  <zorder>tx_seedY2</zorder>
-  <zorder>tx_seedZ2</zorder>
-  <zorder>frame_2</zorder>
-  <zorder>lb_seed2</zorder>
-  <zorder>lb_seed2</zorder>
-  <zorder>scrollArea</zorder>
-  <zorder>horizontalSpacer_12</zorder>
-  <zorder>pb_LungsMask</zorder>
  </widget>
  <resources/>
  <connections/>

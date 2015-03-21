@@ -260,8 +260,8 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
 
     switch (plane) {
     case 1:
-        xin = initialCoord;//size[0]-endCoord;
-        xend = endCoord;//size[0]-initialCoord;
+        xin = size[0]-endCoord;//initialCoord;
+        xend = size[0]-initialCoord;//endCoord;
         yin = 0;
         yend = size[1];
         zin = 0;
@@ -270,8 +270,8 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
     case 2:
         xin = 0;
         xend = size[0];
-        yin = size[1]-endCoord; //initialCoord;
-        yend = size[1]-initialCoord; //endCoord;
+        yin = initialCoord;//size[1]-endCoord;
+        yend = endCoord;//size[1]-initialCoord;
         zin = 0;
         zend = size[2];
         break;
@@ -280,8 +280,8 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
         xend = size[0];
         yin = 0;
         yend = size[1];
-        zin = size[2]-endCoord; //initialCoord;
-        zend = size[2]-initialCoord; //endCoord;
+        zin =  initialCoord;//size[2]-endCoord;
+        zend = endCoord;//size[2]-initialCoord;
         break;
     default:
         xin = 0;
@@ -293,7 +293,6 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
         break;
     }
 
-    cout<<"IN " <<yin<<endl<<"END "<<yend<<endl;
     for (int i = xin ; i < xend ; i++)
     {
         for (int j = yin ; j < yend; j++)
@@ -309,4 +308,5 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
             }
         }
     }
+    output->Update();
 }

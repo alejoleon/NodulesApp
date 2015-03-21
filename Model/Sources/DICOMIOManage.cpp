@@ -303,6 +303,50 @@ ReaderType::Pointer DICOMIOManage::getItkImage(string path){
 }
 
 
+
+
+void DICOMIOManage::castImage (ImageType::Pointer image, vtkImageData* &imageOutput){
+    typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
+    static ConnectorType::Pointer connector= ConnectorType::New();
+    connector->SetInput( image );
+
+    try
+    {
+        connector->Update();
+    }
+    catch (itk::ExceptionObject & e)
+    {
+        std::cerr << "exception in file reader " << std::endl;
+        std::cerr << e << std::endl;
+        return ;
+    }
+    imageOutput = connector->GetOutput();
+}
+
+
+void DICOMIOManage::castImage (ImageBinaryType::Pointer image, vtkImageData* &imageOutput){
+    typedef itk::ImageToVTKImageFilter<ImageBinaryType> ConnectorType;
+    static ConnectorType::Pointer connector= ConnectorType::New();
+    connector->SetInput( image );
+
+    try
+    {
+        connector->Update();
+    }
+    catch (itk::ExceptionObject & e)
+    {
+        std::cerr << "exception in file reader " << std::endl;
+        std::cerr << e << std::endl;
+        return ;
+    }
+    imageOutput = connector->GetOutput();
+}
+
+
+
+
+
+
 /**
  * @brief Define el nombre que tendran los archivos de salida. 
  * @param nameOutputFiles : Nombre que se le dará a los archivos de salida.

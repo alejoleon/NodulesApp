@@ -116,11 +116,14 @@ int main()
     ReaderBinaryType::Pointer readerRegGrowClosing = imagen->readInputImageBin(rutaImgRegGrowClosing);
     imageLungsAfterClosing = readerRegGrowClosing->GetOutput();
 
+
     ReaderBinaryType::Pointer readerMediastinum = imagen->readInputImageBin(rutaImgMediastinum);
     imageMediastinum = readerMediastinum->GetOutput();
 
     ReaderBinaryType::Pointer readerMediastinumOpen = imagen->readInputImageBin(rutaImgMediastinumOpen);
     imageMediastinumOpen = readerMediastinumOpen->GetOutput();
+
+
 
     //ReaderBinaryType::Pointer readerMediastinumGeodesic = imagen->readInputImageBin(rutaImgMediastinumGeodesic);
     //ReaderBinaryType::Pointer readerMediastinumDiafrag = imagen->readInputImageBin(rutaImgMediastinumDiafrag);
@@ -258,30 +261,26 @@ int main()
 	//-->Se crean las imagenes de salida
     imagen->SetNameOutputFiles("OutMediastinum");
     imagen->writeDicomFile(imageMediastinum,rutaImgMediastinum);
-*/
-/*
+
+
     //2.1 Filtro opening con 6.0 mm de radio
     double radiusOp = (double)6.0/tamPixel;
+    cout<<"radio de : "<<radiusOp<<endl;
     binFilters->openingFilter(imageMediastinum,imageMediastinumOpen,radiusOp);
     //Se quitan las regiones pequeñas sueltas
     boumaMet->clearSmallRegions(imageMediastinumOpen);
+
     //-->Se crean las imagenes de salida
     imagen->SetNameOutputFiles("OutMediastinumOpen");
     imagen->writeDicomFile(imageMediastinumOpen,rutaImgMediastinumOpen);
 */
 
-    /*
     //2.2 Mediastino: corte del diafragma
-    ImageBinaryType::SizeType size = imageMediastinumOpen->GetLargestPossibleRegion().GetSize();
-    cout<<"Tamaño X :"<<size[0]<<endl;
-    cout<<"Tamaño Y :"<<size[1]<<endl;
-    cout<<"Tamaño Z :"<<size[2]<<endl;
-
-    filters->clipBinaryVolume(imageMediastinumOpen, imageMediastinumDiafrag, 203 , 276 , 1);
+    filters->clipBinaryVolume(imageMediastinumOpen, imageMediastinumDiafrag, 0 , 80 , 3);
     //-->Se crean las imagenes de salida
     imagen->SetNameOutputFiles("OutMediastinumDiafrag");
     imagen->writeDicomFile(imageMediastinumDiafrag,rutaImgMediastinumDiafrag);
-*/
+
 
 /*
     //2.3 Region de interes
@@ -310,7 +309,7 @@ int main()
 */	
 
 
-
+/*
 cout<<"inicio"<<endl;
     //Mapa de distancia.
 
@@ -325,15 +324,14 @@ cout<<"inicio"<<endl;
     //-->Se crean las imagenes de salida
     imagen->SetNameOutputFiles("Prueba");
     imagen->writeDicomFile(mapa,rutaImgPeriphVesselsDist);
+*/
 
-
-    cout<<"YA"<<endl;
     //Para mostrar en VTK
     //VTKVisualization* vtkVis= new VTKVisualization();
     //vtkVis->SetDir1(rutaImgIn);
     //vtkVis->SetDir1("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/dddd");
-    //vtkVis->SetDir2(rutaImgMediastinumDiafrag);
-    //vtkVis->readImages(imageMediastinumDiafrag);
+    vtkVis->SetDir2(rutaImgMediastinumDiafrag);
+    vtkVis->readImages(imageMediastinumDiafrag);
 
 	 return 0 ;
 }

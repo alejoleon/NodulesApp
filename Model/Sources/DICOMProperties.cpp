@@ -1,12 +1,18 @@
 #include "DICOMProperties.h"
 
 
+
+/**
+ * @brief DICOMProperties::DICOMProperties Constructor por defecto.
+ */
+DICOMProperties::DICOMProperties(){
+
+}
 /**
  * @brief Contructor con el parametro de la dirección o path donde se encuentra la imagen DICOM de entrada.
  * @param path dirección o path donde se encuentra la imagen DICOM de entrada.
  * @return Objeto de la clase DICOMProperties
  */
-
 DICOMProperties::DICOMProperties(string path)
 {
 	this->path=path;
@@ -17,7 +23,6 @@ DICOMProperties::DICOMProperties(string path)
     this->patientID = this->getValue("0010|0020");
     this->patientBirth = this->getValue("0010|0030");
     this->patientSex = this->getValue("0010|0040");
-
 }
 
 
@@ -27,6 +32,18 @@ DICOMProperties::DICOMProperties(string path)
 DICOMProperties::~DICOMProperties()
 {
 }
+
+
+ void DICOMProperties::loadData(string path){
+     this->path = path;
+     this->loadValues();
+
+     this->pixelValue = atof(this->getValue("0028|0030").c_str());
+     this->patientName = this->getValue("0010|0010");
+     this->patientID = this->getValue("0010|0020");
+     this->patientBirth = this->getValue("0010|0030");
+     this->patientSex = this->getValue("0010|0040");
+ }
 
 /**
  * @brief DICOMProperties::loadValues carga todos los valores que tiene el diccionario de metadatos en un mapa (dicomTags).

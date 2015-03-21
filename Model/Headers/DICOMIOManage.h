@@ -19,11 +19,6 @@
 #include <itkImageToVTKImageFilter.h>
 #include <vtkImageData.h>
 
-//Conversion vtk-itk
-#include <itkVTKImageToImageFilter.h>
-
-
-
 
 
 typedef itk::NumericSeriesFileNames OutputNamesGeneratorType;
@@ -77,6 +72,9 @@ public:
 
     ReaderType::Pointer getItkImage(string path);
     vtkSmartPointer< vtkDICOMImageReader > getVtkImageReader(string path);
+
+    void castImage (ImageType::Pointer image,vtkImageData* &imageOutput);
+    void castImage (ImageBinaryType::Pointer image,vtkImageData* &imageOutput);
 
     void writeDicomFile(ImageType::Pointer image, string outputDirectory);
 	void writeDicomFile (ImageBinaryType::Pointer image,string outputDirectory);

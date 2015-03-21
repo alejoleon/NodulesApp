@@ -78,11 +78,16 @@ private:
      */
     int upperValue;
     /**
-     * @brief minBoxHUValueHasChange Variable para saber si aun no se han hecho cambios en el minBoxHUValue o maxBoxHUValue respectivamente.
+     * @brief minBoxHUValueHasChange Variable para saber si aun no se han hecho cambios en el minBoxHUValue.
      *True : El valor del boxHUValue ha cambiado almenos una vez.
      *False : El valor del boxHUValue no ha cambiado desde que se creó.
      */
     bool minBoxHUValueHasChange;
+    /**
+     * @brief maxBoxHUValueHasChange Variable para saber si aun no se han hecho cambios en el maxBoxHUValue.
+     *True : El valor del boxHUValue ha cambiado almenos una vez.
+     *False : El valor del boxHUValue no ha cambiado desde que se creó.
+     */
     bool maxBoxHUValueHasChange;
     /**
      * @brief chartType Indica el tipo de gráfico en que se presentará el histograma, puede ser continuo, barras, puntos o linea.

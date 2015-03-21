@@ -20,17 +20,26 @@
 #include "itkCastImageFilter.h"
 
 //Clases del modelo
-#include "DICOMIOManage.h"
-#include "ImageProcessingUtils.h"
-#include "ImageFilters.h"
-#include "Configuracion.h"
+#include "BinaryFilters.h"
 #include "BoumaMethods.h"
+#include "Configuracion.h"
+#include "DICOMIOManage.h"
+#include "DICOMProperties.h"
+#include "ImageFilters.h"
+#include "ImageProcessingUtils.h"
 
 using namespace std;
 
 class Coordinator
 {
 public:
+
+    void funcionPrueba();
+
+
+
+
+
     /**
      * @brief Coordinator Constructor por defecto.
      */
@@ -39,13 +48,6 @@ public:
      * @brief Destructor por defecto.
      */
     ~Coordinator();
-
-    /**
-     * @brief getVtkImageReader Se obtiene un apuntador a una imagen de tipo VTK reader, a partir de la ruta del directorio donde se encuentra la imagen.
-     * @param path Ruta donde está el directorio que contiene las imágenes DICOM.
-     * @return Apuntador a imágen de tipo VTK reader, correspondiente a la imágen que se va a mostrar.
-     */
-    vtkSmartPointer< vtkDICOMImageReader > getVtkImageReader(string path);
 
     /**
      * @brief getHistogramData Retorna el histograma de la imagen actual en un vector, ademas retorna el valor correspondientes al mínimo y máximo valor de gris del histograma en los parámetros pasados por referencia.
@@ -65,43 +67,52 @@ public:
     void setCurrentImage (int image);
 
     //Algoritmo
-    /**
-     * @brief doMedian Realiza la mediana de la imagen de entrada (imageIn), usando el radio que ingresa por parámetro.
-     * @param radius Radio con el que se va a hacer la mediana.
-     * @return Ruta o directorio donde se encuentra la imagen resultante.
-     */
-    const string doMedian(int radius);
 
     /**
-     * @brief doLungsMask Hace una máscara de los pulmones, usando las dos semillas pasadas por parámetro.
-     * @param seeds Arreglo que contiene las coordenadas espaciales de las semillas de cada pulmón.
-     * @return Ruta o directorio donde se encuentra la imagen resultante.
-     */
-    const string doLungsMask(float seeds[]);
-
-    /**
-     * @brief getImageIn Retorna la ruta donde se encuentra la imagen de entrada.
-     * @return Ruta o directorio donde se encuentra la imagen de entrada.
-     */
-    const string getImageIn();
-    /**
-     * @brief setImageIn Establece la ruta donde se encuentra la imagen de entrada.
-     * @param dirImgIn Ruta o directorio donde se encuentra la imagen de entrada.
+     * @brief setImageIn Establece la imagen de entrada a partir de la ruta o directorio donde se encuentra la imagen inicial.
+     * @param dirImgIn Ruta o directorio donde se encuentra la imagen DICOM.
      */
     void setImageIn(string dirImgIn);
+    /**
+     * @brief doMedian Hace el filtrado de mediana mediante el coordinador.
+     * @param radius Radio con el que se va a hacer la mediana.
+     */
+    void doMedian(int radius);
+    /**
+     * @brief doLungsMask Genera la máscara de los pulmones a partir de dos semillas, una para cada pulmón.
+     * @param seeds Arreglo con las coordenadas de las dos semillas de cada pulmón.
+     */
+    void doLungsMask(float seeds[]);
+
+
+    void doMediastinumMask (int first = 0, int last =0);
+
 
     /**
-     * @brief getImageMedian Retorna la ruta donde se encuentra la imagen despues de pasada por el filtro mediana.
-     * @return Ruta o directorio donde se encuentra la imagen luego de haber pasado por el filtro mediana.
+     * @brief getImageIn Obtiene la imagen de entrada.
+     * @return Imagen de entrada en formato VTK.
      */
-    const string getImageMedian();
-
+    vtkImageData* getImageIn();
     /**
-     * @brief getImageLungsMask Retorna la ruta donde se encuentra la imagen de máscara de pulmones.
-     * @return Ruta o directorio donde se encuentra la segmentación de los pulmones o máscara.
+     * @brief getImageMedian Obtiene la imagen despues de haber pasado por el filtro mediana.
+     * @return Imagen despues de filtro mediana en formato VTK.
      */
-    const string getImageLungsMask();
-
+    vtkImageData* getImageMedian();
+    /**
+     * @brief getImageLungsMask Obtiene la imagen con la máscara de los pulmones.
+     * @return Imagen con máscara de los pulmones en formato VTK.
+     */
+    vtkImageData* getImageLungsMask();
+    /**
+     * @brief getImageMediastinumMask Obtiene la imagen con la máscara del mediastino.
+     * @return Imagen con máscara del mediastino.
+     */
+    vtkImageData* getImageMediastinumMask();
+    /**
+     * @brief getImageInterestRegion Obtiene la imagen con la máscara del área de interés.
+     * @return Imagen con mascara del área de interés.
+     */
+    vtkImageData* getImageInterestRegion();
 
 protected:
 
@@ -110,46 +121,20 @@ protected:
      */
     ImageType::Pointer currentImage;
     /**
-     * @brief dicomIOmanage Apuntador a objeto de la clase DICOMIOManage.
+     * @brief dicomIOmanage Apuntador a objeto de la clase DICOMIOManage, que contiene los datos necesarios para escribir y leer imágenes dicom, además tiene el diccionario de metadatos de la imagen de entrada.
      */
     DICOMIOManage* dicomIOmanage;
     /**
-     * @brief utils Apuntador a objeto de la clase ImageProcessingUtils.
+     * @brief dicomProperties Apuntador a objeto de la clase DICOMProperties, que contiene la información del encabezado de la imagen dicom de entrada.
      */
-    ImageProcessingUtils* utils;
-    /**
-     * @brief imageFilters Apuntador a objeto de la clase ImageFilters.
-     */
-    ImageFilters* imageFilters;
-    /**
-     * @brief config Apuntador a objeto de la clase Configuration.
-     */
-    Configuracion* config;
-    /**
-     * @brief boumaMethods Apuntador a objeto de la clase BoumaMethods.
-     */
-    BoumaMethods* boumaMethods;
+    DICOMProperties* dicomProperties;
 
 
     //Algoritmo.
     /**
-     * @brief readerImageIn Lector de la imagen de entrada.
-     */
-    ReaderType::Pointer readerImageIn;
-
-    /**
      * @brief dirImgIn Ruta o directorio donde se encuentra la imagen de entrada.
      */
     string dirImgIn;
-    /**
-     * @brief dirImgMedian Ruta o directorio donde se encuentra la imagen luego de haber pasado por el filtro mediana.
-     */
-    string dirImgMedian;
-    /**
-     * @brief dirImgLungsMask Ruta o directorio donde se encuentra la imagen de máscara de los pulmones.
-     */
-    string dirImgLungsMask;
-
 
     /**
      * @brief imageIn Apuntador a la imagen de entrada.
@@ -163,6 +148,14 @@ protected:
      * @brief imageLungsMask Apuntador a la imagen de la máscara de los pulmones.
      */
     ImageBinaryType::Pointer imageLungsMask;
+    /**
+     * @brief imageMediastinumMask Apuntador a la imagen de la máscara del mediastino.
+     */
+    ImageBinaryType::Pointer imageMediastinumMask;
+    /**
+     * @brief imageInterestRegion Apuntador a la imagen de la máscara de la region de interés
+     */
+    ImageBinaryType::Pointer imageInterestRegion;
 };
 
 #endif // COORDINATOR_H

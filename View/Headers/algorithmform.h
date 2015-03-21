@@ -53,26 +53,57 @@ private slots:
      * @brief on_pb_Mediana_clicked Realiza un filtrado de mediana de la imagen de entrada, mediante el coordinador, usando el radio escrito en el cuadro de texto.
      */
     void on_pb_Mediana_clicked();
-
     /**
      * @brief on_pb_LungsMask_clicked Realiza una segmentación de los pulmones mediante crecimiento de regiones, por medio del coordinador, usando las semillas escritas en los cuadros de texto correspondiente.
      */
     void on_pb_LungsMask_clicked();
-
+    /**
+     * @brief on_pb_doMediastinum_clicked Realiza la segmentación del mediastino teniendo en cuenta los radioButton de selección de recorte del diafragma.
+     * Si está el YES seleccionado, entonces se deben tener valores válidos en los campos de texto y se hace el recorte del diafragma o de la imagen, de acuerdo a los parámetros del recorte.
+     * Si está en NO, o si los valores en el cuadro de texto son iguales, entonces solo se hace la segmentación del mediastino, dejando el diafragma.
+     */
+    void on_pb_doMediastinum_clicked();
+    
+    
+    
+    
+    
+    
+    
     /**
      * @brief on_pb_viewImgIn_clicked Muestra la imagen original que fue abierta.
      */
     void on_pb_viewImgIn_clicked();
-
     /**
      * @brief on_pb_viewMedian_clicked Muestra la imagen luego de haber realizado la mediana.
      */
     void on_pb_viewMedian_clicked();
-
     /**
      * @brief on_pb_viewLungsMask_clicked Muestra la imagen de mascara de los pulmones luego de haber sido creada.
      */
     void on_pb_viewLungsMask_clicked();
+    /**
+     * @brief on_pb_viewMediastinum_clicked Muestra la imagen de la mascara del mediastino.
+     */
+    void on_pb_viewMediastinum_clicked();
+    
+    
+    
+    
+    
+    
+    /**
+     * @brief on_rb_ClipMedYes_clicked Acción que debe realizarse al momento de seleccionar la opcion YES en el cuadro de parámetros del mediastino.
+     * Se deben habilitar los cuadros de texto de selección de slices mínimo y máximo.
+     */
+    void on_rb_ClipMedYes_clicked();
+    /**
+     * @brief on_rb_clipMedNo_clicked Acción que debe realizarse al momento de seleccionar la opcion NO en el cuadro de parámetros del mediastino.
+     * Se deben deshabilitar los cuadros de texto de selección de slices mínimo y máximo.
+     */
+    void on_rb_clipMedNo_clicked();
+
+
 
 private:
 

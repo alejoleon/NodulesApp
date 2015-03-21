@@ -17,6 +17,7 @@
 #include "histogramForm.h"
 #include "fourpanelform.h"
 
+//Imagen
 
 using namespace std;
 
@@ -59,10 +60,9 @@ public:
     void setCoordinatorAlgorithmForm(Coordinator * &coordinator);
 
     /**
-     * @brief setUpImages Evento para visualizar las imágenes DICOM a partir de la ruta obtenida al abrir un archivo.
-     * @param dirDICOMImg Ruta o directorio donde se encuentra el directorio de imágenes DICOM.
+     * @brief setUpImages Por medio del coordinador y de la ruta donde está la imagen, se obtiene una imagen VTK para mostrar.
      */
-    void setUpImages(string dirDICOMImg);
+    void setUpImages(vtkImageData*);
 
 
 
