@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/Icons">
-        <file>Icons/vista coronal.jpg</file>
         <file>Icons/histograma.png</file>
+        <file>Icons/VistaCoronal.png</file>
+        <file>Icons/VistaSagital.png</file>
+        <file>Icons/VistaTransversal.png</file>
     </qresource>
 </RCC>

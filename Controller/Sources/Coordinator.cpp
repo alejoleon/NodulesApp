@@ -11,6 +11,11 @@ Coordinator::Coordinator()
     this->imageLungsMask = ImageBinaryType::New();
     this->imageMediastinumMask = ImageBinaryType::New();
     this->imageInterestRegion = ImageBinaryType::New();
+
+    this->existImageIn = false;
+    this->existImageMedian = false;
+    this->existImageLungsMask = false;
+    this->existImageMediastinumMask = false;
 }
 
 Coordinator::~Coordinator()
@@ -30,6 +35,53 @@ vector<int> Coordinator::getHistogramData (int & lower , int & upper){
     vector<int> data = utils->histogramFilterToVector(hist);
 
     return data;
+}
+
+vector<int> Coordinator::getHistogramData (int & lower , int & upper , int mask){
+
+    QStringList maskList = getMaskList();
+    vector<int> data;
+
+    ImageProcessingUtils * utils = new ImageProcessingUtils();
+    typedef itk::Statistics::MaskedImageToHistogramFilter< ImageType, ImageBinaryType > MaskedImageToHistogramFilterType;
+
+    if (maskList.at(mask).toStdString() == "Lungs") {
+
+        lower = utils->getMinimumValue(this->currentImage , this->imageLungsMask);
+        upper = utils->getMaximumValue(this->currentImage, this->imageLungsMask);
+
+        MaskedImageToHistogramFilterType::Pointer hist = utils->histogram(this->currentImage, this->imageLungsMask);
+
+        data = utils->histogramFilterToVector(hist);
+    }
+    else if (maskList.at(mask).toStdString() == "Mediastinum"){
+
+        lower = utils->getMinimumValue(this->currentImage , this->imageMediastinumMask);
+        upper = utils->getMaximumValue(this->currentImage, this->imageMediastinumMask);
+
+        MaskedImageToHistogramFilterType::Pointer hist = utils->histogram(this->currentImage, this->imageMediastinumMask);
+
+        data = utils->histogramFilterToVector(hist);
+
+    }
+
+    return data;
+}
+
+
+QStringList Coordinator::getMaskList (){
+    QStringList maskList;
+
+    maskList<<"None";
+
+    if (existImageLungsMask) {
+        maskList<<"Lungs";
+    }
+    if (existImageMediastinumMask) {
+        maskList<<"Mediastinum";
+    }
+
+    return maskList;
 }
 
 void Coordinator::setCurrentImage (int image){
@@ -66,6 +118,8 @@ void Coordinator::setImageIn(string dirImgIn){
 
     //Se obtienen las propiedades de la imagen de entrada mediante el diccionario de metadatos o encabezado de la imagen DICOM.
     this->dicomProperties->loadData(dirImgIn);
+
+    this->existImageIn = true;
 }
 
 vtkImageData* Coordinator::getImageIn () {
@@ -101,6 +155,8 @@ vtkImageData* Coordinator::getImageInterestRegion(){
 void Coordinator::doMedian (int radius){
     ImageFilters * imageFilters = new ImageFilters();
     imageFilters->filtroMediana(imageIn, radius , imageMedian );
+
+    this->existImageMedian = true;
 }
 
 void Coordinator::doLungsMask(float seeds[]){
@@ -113,6 +169,8 @@ void Coordinator::doLungsMask(float seeds[]){
     //Se hace el closing
     double radius = (double)2.4/this->dicomProperties->getPixelValue();
     binaryFilters->closingFilter(imageLungsMask,imageLungsMask,radius);
+
+    this->existImageLungsMask = true;
 }
 
 void Coordinator::doMediastinumMask (int first, int last){
@@ -120,7 +178,6 @@ void Coordinator::doMediastinumMask (int first, int last){
     BinaryFilters * binaryFilters = new BinaryFilters();
     ImageFilters * imageFilters = new ImageFilters();
     boumaMethods->rowWiseMethod(imageMedian,imageLungsMask,imageInterestRegion,imageMediastinumMask,150);
-
 
     //Filtro opening con 6.0 mm de radio
     double radiusOp = (double)6.0/this->dicomProperties->getPixelValue();
@@ -132,8 +189,38 @@ void Coordinator::doMediastinumMask (int first, int last){
         imageFilters->clipBinaryVolume(imageMediastinumMask, imageMediastinumMask, first, last, 3);
     }
 
-
+    this->existImageMediastinumMask = true;
+    modifyLungsMask();
 }
+
+
+void Coordinator::modifyLungsMask(){
+
+    BoumaMethods * boumaMethods = new BoumaMethods();
+    ImageFilters * imageFilters = new ImageFilters();
+
+    //Creación de mapa de distancias.
+    typedef itk::Image<float, 3> ImageFloatType;
+    ImageFloatType::Pointer imageDistanceMap = ImageFloatType::New();
+
+    imageFilters->distanceMap(imageMediastinumMask, imageDistanceMap);
+
+    //Creación de región Geodésica
+    ImageBinaryType::Pointer imageRegionGeodesic = ImageBinaryType::New();
+
+     double distanceGeo = (double)11.0/this->dicomProperties->getPixelValue();
+     boumaMethods->createExclusionRegionLungs(imageIn, imageDistanceMap, imageRegionGeodesic, -300 , distanceGeo);
+
+     //Se modifica la máscara de los pulmones, restando la región geodésica.
+     imageFilters->subtractImage(imageLungsMask, imageRegionGeodesic, imageLungsMask);
+}
+
+
+
+
+
+
+
 
 
 
@@ -150,21 +237,40 @@ void Coordinator::doMediastinumMask (int first, int last){
 
 //Carga todas las imagenes.
 void Coordinator::funcionPrueba(){
-    ReaderType::Pointer readerImIn = dicomIOmanage->readInputImage("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/PCsub1-20090909/W0001.1/1.2.826.0.1.3680043.2.656.1.136/S02A01");
+
+    /*
+    string rutaimageIn = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/PCsub1-20090909/W0001.1/1.2.826.0.1.3680043.2.656.1.136/S02A01";
+    string rutaimageMedian = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/0.0_Mediana7";
+    string rutaimageLungs = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/1.1_Closing2.4mm";
+    string rutaimageMediastinum = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.4.MediastinoSinDiafragma";
+    */
+
+
+    string rutaimageIn = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/PocasImg/0.In";
+    string rutaimageMedian = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/PocasImg/1.0.Med";
+    string rutaimageLungs = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/PocasImg/3.0.FinalLungsMask";
+    string rutaimageMediastinum = "/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/PocasImg/3.0.MediastinoOpen";
+
+
+    ReaderType::Pointer readerImIn = dicomIOmanage->readInputImage(rutaimageIn);
     imageIn = readerImIn->GetOutput();
+    this->existImageIn = true;
 
-    ReaderType::Pointer readerImMedian = dicomIOmanage->readInputImage("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/0.0_Mediana7");
+    ReaderType::Pointer readerImMedian = dicomIOmanage->readInputImage(rutaimageMedian);
     imageMedian = readerImMedian->GetOutput();
+    this->existImageMedian = true;
 
-    ReaderBinaryType::Pointer readerRegGrow = dicomIOmanage->readInputImageBin("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/1.1_Closing2.4mm");
+    ReaderBinaryType::Pointer readerRegGrow = dicomIOmanage->readInputImageBin(rutaimageLungs);
     imageLungsMask = readerRegGrow->GetOutput();
+    this->existImageLungsMask = true;
 
-    ReaderBinaryType::Pointer readerMediastinum = dicomIOmanage->readInputImageBin("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/Outputs/W0001/2.4.MediastinoSinDiafragma");
+    ReaderBinaryType::Pointer readerMediastinum = dicomIOmanage->readInputImageBin(rutaimageMediastinum);
     imageMediastinumMask = readerMediastinum->GetOutput();
+    this->existImageMediastinumMask = true;
 
     currentImage = imageIn;
 
     //Se obtienen las propiedades de la imagen de entrada mediante el diccionario de metadatos o encabezado de la imagen DICOM.
-    this->dicomProperties->loadData("/Users/AlejoMac/Documents/AlgoritmosTG/ImagenesTG/PCsub1-20090909/W0001.1/1.2.826.0.1.3680043.2.656.1.136/S02A01");
+    this->dicomProperties->loadData(rutaimageIn);
 
 }

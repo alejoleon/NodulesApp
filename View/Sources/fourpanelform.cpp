@@ -2,7 +2,7 @@
 #include "ui_fourpanelform.h"
 
 /**
- * @brief The vtkResliceCursorCallback class Clase que realiza la interacción de los cuatro paneles
+ * @brief The vtkResliceCursorCallback class Clase que realiza la interacción de los cuatro paneles al momento de cambiar parámetros como el contraste de la imágen.
  * Ejemplo de 4 páneles de QT-VTK
  */
 class vtkResliceCursorCallback : public vtkCommand
@@ -76,10 +76,7 @@ public:
   vtkResliceCursorWidget *RCW[3];
 };
 
-/**
- * @brief FourPanelForm::FourPanelForm Constructor por defecto.
- * @param parent Clase padre que crea esta ventana.
- */
+
 FourPanelForm::FourPanelForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FourPanelForm)
@@ -102,20 +99,11 @@ FourPanelForm::FourPanelForm(QWidget *parent) :
             this->ui->spinBoxView3,SLOT(setValue(int)));
 }
 
-/**
- * @brief FourPanelForm::~FourPanelForm Destructor
- */
 FourPanelForm::~FourPanelForm()
 {
     delete ui;
 }
 
-/**
- * @brief FourPanelForm::setUpImages A partir de la ruta del directorio donde están las imágenes DICOM se muestran las 3 vistas y la vista del volumen.
- *                                   En este método se hace uso de dos tipos de imagen (una imagen VTK y otra ITK) de la misma imagen DICOM.
- *                                   Con la imágen VTK se muestra la imagen del volumen, mientras que con la imágen ITK se muestran las 3 vistas.
- * @param dirDICOMImg String, ruta donde está el directorio con las imágenes DICOM.
- */
 void FourPanelForm::setUpImages(vtkImageData * image){
 
       int imageDims[3];
@@ -241,80 +229,10 @@ void FourPanelForm::setUpImages(vtkImageData * image){
 
 }
 
-/**
- * @brief FourPanelForm::setCoordinator Asigna el coordinador al objeto de esta clase.
- * @param coordinator Coordinador.
- */
 void FourPanelForm::setCoordinator (Coordinator * &coordinator){
     this->coordinator = coordinator;
 }
 
-/**
- * @brief FourPanelForm::on_scroll_view1_valueChanged Cada vez que exista un cambio en el ScrollView, se cambia el slice de la vista 1 al valor dado por el ScrollView.
- * @param value Valor en que se encuentra el ScrollView.
- */
-void FourPanelForm::on_scroll_view1_valueChanged(int value)
-{
-    changeViews(value, 0);
-}
-
-/**
- * @brief FourPanelForm::on_scroll_view2_valueChanged Cada vez que exista un cambio en el ScrollView, se cambia el slice de la vista 2 al valor dado por el ScrollView.
- * @param value Valor en que se encuentra el ScrollView.
- */
-void FourPanelForm::on_scroll_view2_valueChanged(int value)
-{
-    changeViews(value, 1);
-}
-
-/**
- * @brief FourPanelForm::on_scroll_view3_valueChanged Cada vez que exista un cambio en el ScrollView, se cambia el slice de la vista 3 al valor dado por el ScrollView.
- * @param value Valor en que se encuentra el ScrollView.
- */
-void FourPanelForm::on_scroll_view3_valueChanged(int value)
-{
-    changeViews(value, 2);
-}
-
-/**
- * @brief FourPanelForm::on_pb_resetViews_2_clicked Cuando es presionado el boton de "Reset", todas las vistas vuelven a su estado inicial, es decir al slice central.
- */
-void FourPanelForm::on_pb_resetViews_2_clicked()
-{
-    changeViews(0, 3);
-}
-
-/**
- * @brief FourPanelForm::changeViews Realiza los cambios en las 3 vistas y la vista del volumen de acuerdo a los parametros del valor, y el elemento que requiere ser cambiado.
- * @param value Valor que debe tomar el slice. 0 si es la vista de volumen.
- * @param element Elemento que requiere ser cambiado. O para la vista 1, 1 para la vista 2, 2 para la vista 3 y 3 para la vista 4
- */
-void FourPanelForm::changeViews(int value, int element){
-
-    //Se le resta un valor de 1 (-1) al slice que debe mostrarse, ya que el valor dado por el scrollView o el spinBox da un valor mas.
-    if (element!=3){
-        this->riw[element]->SetSlice(value-1);
-        this->planeWidget[element]->SetSliceIndex(this->riw[element]->GetSlice());
-        this->ui->qvtkWindow4->update();
-    }
-    else {
-        this->riw[0]->SetSlice(riw[0]->GetSliceMax()/2);
-        this->riw[1]->SetSlice(riw[1]->GetSliceMax()/2);
-        this->riw[2]->SetSlice(riw[2]->GetSliceMax()/2);
-
-        this->ui->scroll_view1->setValue(riw[0]->GetSliceMax()/2);
-        this->ui->scroll_view2->setValue(riw[1]->GetSliceMax()/2);
-        this->ui->scroll_view3->setValue(riw[2]->GetSliceMax()/2);
-    }
-
-    this->ui->qvtkWindow4->update();
-
-}
-
-/**
- * @brief FourPanelForm::modifyViews Modifica la ventana para ver una sola vista.
- * @param view Vista que se va a ver en la ventana. 1 para la vista transversal, 2 para la vista coronal, 3 para la vista sagital, 4 para la vista de volumen, 5 para las 3 vistas y la vista del volumen.
- */
 void FourPanelForm::modifyViews(int view){
 
     //Transversal
@@ -370,31 +288,59 @@ void FourPanelForm::modifyViews(int view){
         this->ui->frameView3->setVisible(true);
         this->ui->frameView4->setVisible(true);
     }
-
 }
 
-/**
- * @brief FourPanelForm::on_spinBoxView1_valueChanged Cambia el valor del ScrollView 1 siempre que el SpinBoxView 1 sea cambiado.
- * @param value Valor que tiene el SpinBoxView 1 luego de un cambio de valor.
- */
+void FourPanelForm::changeViews(int value, int element){
+
+    //Se le resta un valor de 1 (-1) al slice que debe mostrarse, ya que el valor dado por el scrollView o el spinBox da un valor mas.
+    if (element!=3){
+        this->riw[element]->SetSlice(value-1);
+        this->planeWidget[element]->SetSliceIndex(this->riw[element]->GetSlice());
+        this->ui->qvtkWindow4->update();
+    }
+    else {
+        this->riw[0]->SetSlice(riw[0]->GetSliceMax()/2);
+        this->riw[1]->SetSlice(riw[1]->GetSliceMax()/2);
+        this->riw[2]->SetSlice(riw[2]->GetSliceMax()/2);
+
+        this->ui->scroll_view1->setValue(riw[0]->GetSliceMax()/2);
+        this->ui->scroll_view2->setValue(riw[1]->GetSliceMax()/2);
+        this->ui->scroll_view3->setValue(riw[2]->GetSliceMax()/2);
+    }
+
+    this->ui->qvtkWindow4->update();
+}
+
+void FourPanelForm::on_scroll_view1_valueChanged(int value)
+{
+    changeViews(value, 0);
+}
+
+void FourPanelForm::on_scroll_view2_valueChanged(int value)
+{
+    changeViews(value, 1);
+}
+
+void FourPanelForm::on_scroll_view3_valueChanged(int value)
+{
+    changeViews(value, 2);
+}
+
+void FourPanelForm::on_pb_resetViews_2_clicked()
+{
+    changeViews(0, 3);
+}
+
 void FourPanelForm::on_spinBoxView1_valueChanged(int value)
 {
     this->ui->scroll_view1->setValue(value);
 }
 
-/**
- * @brief FourPanelForm::on_spinBoxView2_valueChanged Cambia el valor del ScrollView 2 siempre que el SpinBoxView 2 sea cambiado.
- * @param value Valor que tiene el SpinBoxView 2 luego de un cambio de valor.
- */
 void FourPanelForm::on_spinBoxView2_valueChanged(int value)
 {
     this->ui->scroll_view2->setValue(value);
 }
 
-/**
- * @brief FourPanelForm::on_spinBoxView3_valueChanged Cambia el valor del ScrollView 3 siempre que el SpinBoxView 3 sea cambiado.
- * @param value Valor que tiene el SpinBoxView luego de un cambio de valor.
- */
 void FourPanelForm::on_spinBoxView3_valueChanged(int value)
 {
     this->ui->scroll_view3->setValue(value);

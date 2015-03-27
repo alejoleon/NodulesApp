@@ -17,6 +17,7 @@
 #include "histogramForm.h"
 #include "fourpanelform.h"
 
+
 //Imagen
 
 using namespace std;
@@ -114,6 +115,8 @@ private slots:
 
 
     void on_prueba_clicked();
+
+
 
 private:
 

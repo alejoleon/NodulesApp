@@ -375,3 +375,59 @@ void BoumaMethods::createLungsRegion (ImageType::Pointer imageIn, ImageBinaryTyp
 	BinaryFilters* orFunc=new BinaryFilters();
     orFunc->orFunction(lung1,lung2,lungsRegion);
 }
+
+
+void BoumaMethods::createExclusionRegionLungs (ImageType::Pointer image, ImageFloatType::Pointer distanceMap , ImageBinaryType::Pointer &output, signed short threshold, double pixelLimit){
+
+    //Copia de la imagen que sale del filtro de closing
+    typedef itk::ImageDuplicator< ImageType > DuplicatorType;
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage(image);
+    duplicator->Update();
+
+    typedef itk::CastImageFilter< ImageType, ImageBinaryType > CastingFilterType;
+    CastingFilterType::Pointer caster = CastingFilterType::New();
+    caster->SetInput( duplicator->GetOutput() );
+
+    caster->Update();
+
+    output=caster->GetOutput();
+
+    //Para recorrer imagenes.
+    ImageBinaryType::SizeType size = output->GetLargestPossibleRegion().GetSize();
+    for (int i=0 ; i< size[0] ; i++)
+    {
+        for (int j=0; j< size[1]; j++)
+        {
+            for (int k=0; k<size [2]; k++)
+            {
+                ImageBinaryType::IndexType currentIndex;
+                currentIndex[0] = i;
+                currentIndex[1] = j;
+                currentIndex[2] = k;
+
+                ImageFloatType::IndexType currentIndexMap;
+                currentIndexMap[0] = i;
+                currentIndexMap[1] = j;
+                currentIndexMap[2] = k;
+
+                ImageType::IndexType currentIndexImage;
+                currentIndexImage[0] = i;
+                currentIndexImage[1] = j;
+                currentIndexImage[2] = k;
+
+                ImageFloatType::PixelType currentValueMap = distanceMap->GetPixel(currentIndexMap);
+                ImageType::PixelType currentValueImage = image->GetPixel(currentIndexImage);
+
+                if ( currentValueMap > 0 && currentValueMap < (float)pixelLimit && currentValueImage > threshold ) {
+
+                    output->SetPixel(currentIndex,char(255));
+
+                } else {
+                    output->SetPixel(currentIndex,char(0));
+                }
+            }
+        }
+    }
+    output->Update();
+}

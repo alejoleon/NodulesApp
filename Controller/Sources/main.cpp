@@ -7,6 +7,12 @@
 #include <vtkAutoInit.h>
 
 
+/**
+ * @brief main Clase principal del proyecto desde la cual se crea el coordinador y la ventana principal.
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

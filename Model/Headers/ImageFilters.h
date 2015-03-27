@@ -23,6 +23,13 @@
 #include <itkGrayscaleErodeImageFilter.h>
 #include <itkGrayscaleDilateImageFilter.h>
 
+//Mapa de distancias.
+#include "itkDanielssonDistanceMapImageFilter.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkConnectedComponentImageFilter.h"
+
+//Resta de imagenes.
+#include "itkSubtractImageFilter.h"
 
 //Clases del proyecto
 #include "BinaryFilters.h"
@@ -35,13 +42,16 @@ const unsigned int      DimensionIF = 3;
 typedef itk::Image< PixelType, DimensionIF > ImageType;
 typedef itk::ImageSeriesReader< ImageType > ReaderType;
 
-//Definiciion de imagen Binaria
+//Definicion de imagen Binaria
 typedef unsigned char   PixelBinaryType;
 typedef itk::Image<PixelBinaryType, DimensionIF> ImageBinaryType;
 
 //Definicion de imagen para Crecimiento de regiones (WARNING del compilador)
 typedef float PixelGrowingType;
 typedef itk::Image<PixelGrowingType, DimensionIF> ImageGrowingType;
+
+//Definicion del mapa de distancias.
+typedef itk::Image<float, DimensionIF> ImageFloatType;
 
 using namespace std;
 
@@ -62,7 +72,8 @@ public:
 	void erodeFilter(ImageType::Pointer input,ImageType::Pointer &output, int radius);
 	void dilateFilter(ImageType::Pointer input,ImageType::Pointer &output, int radius);
     void clipBinaryVolume(ImageBinaryType::Pointer input , ImageBinaryType::Pointer &output, int initialCoord, int endCoord, int plane);
-  
+    void distanceMap ( ImageBinaryType::Pointer input, ImageFloatType::Pointer &output);
+    void subtractImage (ImageBinaryType::Pointer input1 , ImageBinaryType::Pointer input2 , ImageBinaryType::Pointer &output);
 };
 
 #endif // IMAGEFILTERS_H

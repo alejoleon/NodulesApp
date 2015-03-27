@@ -310,3 +310,67 @@ void ImageFilters::clipBinaryVolume(ImageBinaryType::Pointer inputIm , ImageBina
     }
     output->Update();
 }
+
+
+/**
+ * @brief ImageFilters::distanceMap
+ * @param input
+ * @param output
+ * Tomado de : http://www.itk.org/Doxygen45/html/Filtering_2DanielssonDistanceMapImageFilter_8cxx-example.html#_a1
+ */
+void ImageFilters::distanceMap ( ImageBinaryType::Pointer input, ImageFloatType::Pointer &output){
+
+    typedef itk::ConnectedComponentImageFilter< ImageBinaryType, ImageBinaryType > LabelerType;
+    LabelerType::Pointer labeler = LabelerType::New();
+
+    typedef itk::DanielssonDistanceMapImageFilter< ImageBinaryType, ImageFloatType, ImageBinaryType >  FilterType;
+    FilterType::Pointer filter = FilterType::New();
+
+    typedef itk::RescaleIntensityImageFilter< ImageFloatType, ImageFloatType > RescalerType;
+    RescalerType::Pointer scaler = RescalerType::New();
+
+    //typedef itk::RescaleIntensityImageFilter<ImageBinaryType, ImageBinaryType > VoronoiRescalerType;
+    //VoronoiRescalerType::Pointer voronoiScaler = VoronoiRescalerType::New();
+
+    labeler->SetInput( input );
+    filter->SetInput( labeler->GetOutput() );
+    scaler->SetInput( filter->GetOutput() );
+    //writer->SetInput( scaler->GetOutput() );
+
+    //voronoiScaler->SetInput( filter->GetVoronoiMap() );
+    //voronoiWriter->SetInput( voronoiScaler->GetOutput() );
+
+    filter->InputIsBinaryOn();
+    filter->SetUseImageSpacing(true);
+    filter->UseImageSpacingOn();
+
+
+    scaler->SetOutputMaximum( 255 );
+    scaler->SetOutputMinimum( 0 );
+    //voronoiScaler->SetOutputMaximum( 255 );
+    //voronoiScaler->SetOutputMinimum( 0 );
+
+    ImageFloatType::Pointer distMap = scaler->GetOutput();
+    //ImageBinaryType::Pointer voroni = voronoiScaler->GetOutput();
+
+    distMap->Update();
+    //voroni->Update();
+
+    //typedef FilterType::VectorImageType   OffsetImageType;
+
+    //OffsetImageType::Pointer vec = filter->GetVectorDistanceMap();
+    //vec->Update();
+    output= distMap;
+}
+
+
+//http://www.itk.org/Wiki/ITK/Examples/ImageProcessing/SubtractImageFilter
+void ImageFilters::subtractImage (ImageBinaryType::Pointer input1 , ImageBinaryType::Pointer input2 , ImageBinaryType::Pointer &output){
+
+    typedef itk::SubtractImageFilter <ImageBinaryType, ImageBinaryType > SubtractImageFilterType;
+    SubtractImageFilterType::Pointer subtractFilter = SubtractImageFilterType::New ();
+    subtractFilter->SetInput1(input1);
+    subtractFilter->SetInput2(input2);
+    subtractFilter->Update();
+    output = subtractFilter->GetOutput();
+}

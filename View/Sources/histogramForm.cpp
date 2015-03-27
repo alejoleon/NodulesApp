@@ -1,12 +1,7 @@
 #include "histogramForm.h"
 #include "ui_histogramForm.h"
 
-/**
- * @brief HistogramForm::HistogramForm Constructor.
- * @param parent Padre que crea esta ventana.
- * @param lowerValue Valor mínimo de gris que tiene el histograma. 0 por defecto.
- * @param upperValue Valor máximo de gris que tiene el histograma. 0 por defecto.
- */
+
 HistogramForm::HistogramForm(QWidget *parent, int lowerValue , int upperValue) :
     QDialog(parent),
     ui(new Ui::HistogramForm)
@@ -18,23 +13,21 @@ HistogramForm::HistogramForm(QWidget *parent, int lowerValue , int upperValue) :
     maxBoxHUValueHasChange = false;
     chartType=vtkChart::BAR;
 
+    //Para indicar que no se esta usando máscara.
+    this->usingMask = false;
+
+    //Para ajustar los valores inicial y final de los sliders.
     this->upperValue = upperValue;
     this->lowerValue = lowerValue;
-
-    //Se les da el valor inicial y el valor final de cada uno de los sliders y de los spinbox.
-    //A los que corresponden al valor inicial se les pone un valor de -1 al máximo.
-    this->ui->minSliderHUValue->setMinimum(this->lowerValue);
-    this->ui->minSliderHUValue->setMaximum(this->upperValue-1);
-    this->ui->minBoxHUValues->setMinimum(this->lowerValue);
-    this->ui->minBoxHUValues->setMaximum(this->upperValue-1);
-    //A los que corresponden al valor final se les pone un valor de +1 al mínimo.
-    this->ui->maxSliderHUValue->setMinimum(this->lowerValue+1);
-    this->ui->maxSliderHUValue->setMaximum(this->upperValue);
-    this->ui->maxBoxHUValues->setMinimum(this->lowerValue+1);
-    this->ui->maxBoxHUValues->setMaximum(this->upperValue);
+    this->setLimitValues();
 
     view = vtkSmartPointer<vtkContextView>::New();
     view->GetRenderer()->SetBackground(0.2, 0.2, 0.2);
+
+    //Se deshabilita el combobox de máscaras ya que inicialmente solo se va a ver el histograma de la imagen original.
+    this->ui->cb_masks->setEnabled(false);
+    this->ui->rb_noMask->setChecked(true);
+
 
     //Conecta la señal del slider (cambio del valor de HU mínimo en la barra) con el slot del spinBox (cambio del valor de HU mínimo en el item).
     //Cuando se cambia el valor en el slider de valor Mínimo, se ve reflejado ese valor en el spinBox de valor Mínimo.
@@ -58,87 +51,57 @@ HistogramForm::HistogramForm(QWidget *parent, int lowerValue , int upperValue) :
 
 }
 
-/**
- * @brief HistogramForm::~HistogramForm Destructor.
- */
 HistogramForm::~HistogramForm()
 {
     delete ui;
 }
 
-/**
- * @brief HistogramForm::setCoordinator Asigna el coordinador al objeto de esta clase.
- * @param coordinator Coordinador.
- */
 void HistogramForm::setCoordinator (Coordinator * &coordinator){
     this->coordinator = coordinator;
 }
 
-/**
- * @brief HistogramForm::setHistogram Asigna un histograma al histograma de esta ventana.
- * @param hist Arreglo que contiene un histograma.
- */
 void HistogramForm::setHistogram(vector<int> hist){
     this->hist = hist;
 }
 
-/**
- * @brief HistogramForm::setLowerValue Asigna el valor de gris mínimo.
- * @param lowerValue Valor de gris mínimo.
- */
-void HistogramForm::setLowerValue(int lowerValue){
-    this->lowerValue = lowerValue;
+void HistogramForm::setMasksList (QStringList masksList){
+     this->ui->cb_masks->addItems(masksList);
 }
 
-/**
- * @brief HistogramForm::setUpperValue Asigna el valor de gris máximo.
- * @param upperValue Valor de gris máximo.
- */
-void HistogramForm::setUpperValue(int upperValue){
-    this->upperValue = upperValue;
-}
-/**
- * @brief HistogramForm::on_minBoxHUValues_valueChanged Cuando hay un cambio en el valor de gris mínimo, se verifica que dicho valor no sobrepase el valor de gris máximo, de ser así el valor máximo siempre estará un valor de gris mas arriba.
- * @param actualValue valor actual en que se encuentra el valor de gris mínimo.
- */
-void HistogramForm::on_minBoxHUValues_valueChanged(int actualValue)
-{
-    if(actualValue >=  this->ui->maxBoxHUValues->value()) {
-        this->ui->maxBoxHUValues->setValue(actualValue+1);
+void HistogramForm::setLimitValues (){
+
+    int lower, upper;
+
+    if (!this->usingMask){
+        lower = this->lowerValue;
+        upper = this->upperValue;
+    }
+    else {
+        lower = this->lowerValueMask;
+        upper = this->upperValueMask;
     }
 
-    if (!minBoxHUValueHasChange) {
-        minBoxHUValueHasChange = true;
-    } else {
-         changeHistogramBarView(actualValue , this->ui->maxBoxHUValues->value());
-    }
-}
+    //Se les da el valor inicial y el valor final de cada uno de los sliders y de los spinbox.
+    //A los que corresponden al valor inicial se les pone un valor de -1 al máximo.
+    this->ui->minSliderHUValue->setMinimum(lower);
+    this->ui->minSliderHUValue->setMaximum(upper-1);
+    this->ui->minBoxHUValues->setMinimum(lower);
+    this->ui->minBoxHUValues->setMaximum(upper-1);
+    //A los que corresponden al valor final se les pone un valor de +1 al mínimo.
+    this->ui->maxSliderHUValue->setMinimum(lower+1);
+    this->ui->maxSliderHUValue->setMaximum(upper);
+    this->ui->maxBoxHUValues->setMinimum(lower+1);
+    this->ui->maxBoxHUValues->setMaximum(upper);
 
-/**
- * @brief HistogramForm::on_maxBoxHUValues_valueChanged Cuando hay un cambio en el valor de gris máximo, se verifica que dicho valor no sobrepase el valor de gris mínimo, de ser así el valor mínimo siempre estará un valor de gris mas abajo.
- * @param actualValue valor actual en que se encuentra el valor de gris máximo.
- */
-void HistogramForm::on_maxBoxHUValues_valueChanged(int actualValue)
-{
-    if(actualValue <=  this->ui->minBoxHUValues->value()) {
-        this->ui->minBoxHUValues->setValue(actualValue-1);
-    }
-
-    if (!maxBoxHUValueHasChange) {
-        maxBoxHUValueHasChange = true;
-    } else {
-         changeHistogramBarView(this->ui->minBoxHUValues->value() , actualValue);
-    }
+    //Valores iniciales:
+    this->ui->minSliderHUValue->setValue(lower);
+    this->ui->maxSliderHUValue->setValue(upper);
+    this->ui->minBoxHUValues->setValue(lower);
+    this->ui->maxBoxHUValues->setValue(upper);
 
 }
 
-/**
- * @brief HistogramForm::changeHistogramView Dibuja un diagrama (histograma) en el qvtkWidget. El tipo de diagrama depende del valor de Chart.
- * @param minValue Valor mínimo desde el cual se dibujará el histograma.
- * @param maxValue Valor máximo hasta el cual se dibujará el histograma.
- * Tomado de : http://www.paraview.org/Wiki/VTK/Examples/Cxx/Plotting/BarChart
- */
-void HistogramForm:: changeHistogramBarView(int minValue , int maxValue ) {
+void HistogramForm:: changeHistogramView(int minValue , int maxValue ) {
 
     //Para quitar las anteriores tablas que pueden existir en la view.
     view->GetScene()->ClearItems();
@@ -164,9 +127,14 @@ void HistogramForm:: changeHistogramBarView(int minValue , int maxValue ) {
     for (int i = 0; i < maxValue-minValue+1; i++)
     {
         table->SetValue(i,0,i+minValue);
-        table->SetValue(i,1,hist[i+(minValue-lowerValue)]);
-    }
 
+        if (!this->usingMask){
+            table->SetValue(i,1,hist[i+(minValue-lowerValue)]);
+        }
+        else {
+            table->SetValue(i,1,histMask[i+(minValue-lowerValueMask)]);
+        }
+    }
     // Se agregan las caracteristicas del diagrama.
     vtkPlot *line = 0;
 
@@ -189,54 +157,100 @@ void HistogramForm:: changeHistogramBarView(int minValue , int maxValue ) {
     this->ui->qvtkhistogram->update();
 }
 
-/**
- * @brief HistogramForm::on_rb_line_clicked Cuando se presiona el radioButton correspondiente, se cambia al diagrama de linea.
- */
+void HistogramForm::on_minBoxHUValues_valueChanged(int actualValue)
+{
+    if(actualValue >=  this->ui->maxBoxHUValues->value()) {
+        this->ui->maxBoxHUValues->setValue(actualValue+1);
+    }
+
+    if (!minBoxHUValueHasChange) {
+        minBoxHUValueHasChange = true;
+    } else {
+         changeHistogramView(actualValue , this->ui->maxBoxHUValues->value());
+    }
+}
+
+void HistogramForm::on_maxBoxHUValues_valueChanged(int actualValue)
+{
+    if(actualValue <=  this->ui->minBoxHUValues->value()) {
+        this->ui->minBoxHUValues->setValue(actualValue-1);
+    }
+
+    if (!maxBoxHUValueHasChange) {
+        maxBoxHUValueHasChange = true;
+    } else {
+         changeHistogramView(this->ui->minBoxHUValues->value() , actualValue);
+    }
+
+}
+
 void HistogramForm::on_rb_line_clicked()
 {
     if (this->ui->rb_line->isChecked()){
         this->chartType = chartType=vtkChart::LINE;
-        changeHistogramBarView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
+        changeHistogramView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
     }
 }
 
-/**
- * @brief HistogramForm::on_rb_bar_clicked Cuando se presiona el radioButton correspondiente, se cambia al diagrama de barras.
- */
 void HistogramForm::on_rb_bar_clicked()
 {
     if (this->ui->rb_bar->isChecked()){
         this->chartType = chartType=vtkChart::BAR;
-        changeHistogramBarView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
+        changeHistogramView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
     }
 }
 
-/**
- * @brief HistogramForm::on_rb_points_clicked Cuando se presiona el radioButton correspondiente, se cambia al diagrama de puntos.
- */
 void HistogramForm::on_rb_points_clicked()
 {
     if (this->ui->rb_points->isChecked()){
         this->chartType = chartType=vtkChart::POINTS;
-        changeHistogramBarView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
+        changeHistogramView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
     }
 }
 
-/**
- * @brief HistogramForm::on_rb_stacked_clicked Cuando se presiona el radioButton correspondiente, se cambia al diagrama acumulado.
- */
 void HistogramForm::on_rb_stacked_clicked()
 {
     if (this->ui->rb_stacked->isChecked()){
         this->chartType = chartType=vtkChart::STACKED;
-        changeHistogramBarView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
+        changeHistogramView(this->ui->minBoxHUValues->value() , this->ui->maxBoxHUValues->value());
     }
 }
 
-/**
- * @brief HistogramForm::on_pb_exit_clicked Se cierra la ventana.
- */
 void HistogramForm::on_pb_exit_clicked()
 {
     this->close();
+}
+
+void HistogramForm::on_rb_yesMask_clicked()
+{
+    this->ui->cb_masks->setEnabled(true);
+}
+
+void HistogramForm::on_rb_noMask_clicked()
+{
+    this->ui->cb_masks->setEnabled(false);
+    this->usingMask = false;
+    this->setLimitValues();
+}
+
+void HistogramForm::on_cb_masks_currentIndexChanged(int index)
+{
+    vector<int> data;
+
+    if (index == 0) {
+        this->usingMask = false;
+        this->setLimitValues();
+    }
+    else {
+        int lower,upper;
+        data = this->coordinator->getHistogramData(lower,upper,index);
+
+        this->upperValueMask = upper;
+        this->lowerValueMask = lower;
+
+        this->usingMask = true;
+
+        this->histMask = data;
+        this->setLimitValues();
+    }
 }

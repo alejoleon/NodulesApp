@@ -54,6 +54,43 @@ ReaderBinaryType::Pointer DICOMIOManage:: readInputImageBin(string inputDirector
 }
 
 
+
+ReaderFloatType::Pointer DICOMIOManage:: readInputImageFloat(string inputDirectory){
+
+    ImageIOType::Pointer gdcmIO = ImageIOType::New();
+    NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
+
+    namesGenerator->SetInputDirectory( inputDirectory );
+    const ReaderFloatType::FileNamesContainer & filenames = namesGenerator->GetInputFileNames();
+
+    //Guarda el numero de archivos que hay en el directorio de entrada.
+    this->inputSize=(int)filenames.size();
+
+    ReaderFloatType::Pointer readerFloat = ReaderFloatType::New();
+    readerFloat->SetImageIO(gdcmIO);
+    readerFloat->SetFileNames( filenames );
+
+    dictionary = readerFloat->GetMetaDataDictionaryArray();
+
+    try
+    {
+        readerFloat->Update();
+    }
+    catch (itk::ExceptionObject &excp)
+    {
+        std::cerr << "Exception thrown while reading the image" << std::endl;
+        std::cerr << excp << std::endl;
+        return NULL;
+    }
+    return readerFloat;
+}
+
+
+
+
+
+
+
 /**
  * @brief Lee una imagen DICOM y la guarda en una variable para trabajar con ITK
  * @param inputDirectory Directorio donde están las imágenes de entrada.

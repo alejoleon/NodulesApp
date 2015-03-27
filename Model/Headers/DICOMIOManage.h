@@ -45,7 +45,9 @@ typedef std::vector< DictionaryRawPointer > DictionaryArrayType;
 typedef const DictionaryArrayType *         DictionaryArrayRawPointer;
 
 //Definición de mapas de distancias
-typedef itk::Image<float, 3>          ImageFloatType;
+typedef float   PixelFloatType;
+typedef itk::Image<PixelFloatType, DimensionDM> ImageFloatType;
+typedef itk::ImageSeriesReader< ImageFloatType > ReaderFloatType;
 
 
 
@@ -69,6 +71,7 @@ public:
 
     ReaderType::Pointer readInputImage(string inputDirectory);
     ReaderBinaryType::Pointer readInputImageBin(string inputDirectory);
+    ReaderFloatType::Pointer readInputImageFloat(string inputDirectory);
 
     ReaderType::Pointer getItkImage(string path);
     vtkSmartPointer< vtkDICOMImageReader > getVtkImageReader(string path);

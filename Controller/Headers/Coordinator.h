@@ -28,8 +28,15 @@
 #include "ImageFilters.h"
 #include "ImageProcessingUtils.h"
 
+//Lista para combobox
+#include <QStringList>
+
 using namespace std;
 
+/**
+ * @brief The Coordinator class Encargado de realizar la conexión entre el modelo y las vistas.
+ * Contiene toda la información y métodos necesarios para realizar el procesamíento de las imágenes a partir del manejo de la interfaz de usuario.
+ */
 class Coordinator
 {
 public:
@@ -58,6 +65,15 @@ public:
     vector<int> getHistogramData (int & lower , int & upper);
 
     /**
+     * @brief getHistogramData Retorna el histograma de la imagen actual en un vector, ademas retorna el valor correspondientes al mínimo y máximo valor de gris del histograma en los parámetros pasados por referencia.
+     * @param lower Correspondiente al mínimo valor de gris en el histograma. Variable pasada por referencia.
+     * @param upper Correspondiente al máximo valor de gris en el histograma. Variable pasada por referencia.
+     * @param mask identificador que indica la mascara que se va a usar, este valor corresponde a la posición en la lista de Imágenes de Mascaras (getMaskList()).
+     * @return vector del histograma de la imagen.
+     */
+    vector<int> getHistogramData (int & lower , int & upper, int mask);
+
+    /**
      * @brief setCurrentImage Establece la imagen actual con la que se está trabajando de acuerdo al ID que le llega por parámetro.
      * @param image ID que indica cual imagen es la actual.
      * 1.Para la imagen de entrada.
@@ -66,6 +82,13 @@ public:
      */
     void setCurrentImage (int image);
 
+    /**
+     * @brief getMaskList Retorna una lista con los nombres de las imágenes (máscaras) que existen en memoria.
+     * @return Lista de máscaras que hay actualmente en memoria.
+     */
+    QStringList getMaskList ();
+
+
     //Algoritmo
 
     /**
@@ -73,19 +96,31 @@ public:
      * @param dirImgIn Ruta o directorio donde se encuentra la imagen DICOM.
      */
     void setImageIn(string dirImgIn);
+
     /**
      * @brief doMedian Hace el filtrado de mediana mediante el coordinador.
      * @param radius Radio con el que se va a hacer la mediana.
      */
     void doMedian(int radius);
+
     /**
      * @brief doLungsMask Genera la máscara de los pulmones a partir de dos semillas, una para cada pulmón.
      * @param seeds Arreglo con las coordenadas de las dos semillas de cada pulmón.
      */
     void doLungsMask(float seeds[]);
 
-
+    /**
+     * @brief doMediastinumMask Genera la máscara del mediastino a partir de la máscara de los pulmones.Llama a la función para modificar la máscara de los pulmones.
+     * @param first Parámetro desde el cual se recorta el plano transversal de la imagen.
+     * @param last Parámetro hasta el cual se recorta el plano transversal de la imagen.
+     */
     void doMediastinumMask (int first = 0, int last =0);
+
+    /**
+     * @brief modifyLungsMask Modifica la máscara de los pulmones a partir de la máscara del mediastino y del mapa de distancia del mismo.
+     */
+    void modifyLungsMask();
+
 
 
     /**
@@ -156,6 +191,28 @@ protected:
      * @brief imageInterestRegion Apuntador a la imagen de la máscara de la region de interés
      */
     ImageBinaryType::Pointer imageInterestRegion;
+
+
+
+    //Variables para conocer cuales imágenes existen.
+    /**
+     * @brief existImageIn Indica si existe la imagen de entrada en memoria (True: si existe).
+     */
+    bool existImageIn;
+    /**
+     * @brief existImageMedian Indica si existe la imagen despues del filtro de mediana en memoria (True: si existe).
+     */
+    bool existImageMedian;
+    /**
+     * @brief existImageLungsMask Indica si existe la imagen de máscara de pulmones en memoria (True: si existe).
+     */
+    bool existImageLungsMask;
+    /**
+     * @brief existImageMediastinumMask Indica si existe la imagen de de máscara de mediastino en memoria (True: si existe).
+     */
+    bool existImageMediastinumMask;
+
+
 };
 
 #endif // COORDINATOR_H

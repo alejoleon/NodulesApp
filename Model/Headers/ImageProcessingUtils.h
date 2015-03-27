@@ -49,6 +49,7 @@ public:
 	MaskedImageToHistogramFilterType::Pointer histogramFilter (ImageType::Pointer image ,ImageBinaryType::Pointer mask);
 
     vector<int> histogramFilterToVector(ImageToHistogramFilterType::Pointer);
+    vector<int> histogramFilterToVector(MaskedImageToHistogramFilterType::Pointer);
 
 };
 	

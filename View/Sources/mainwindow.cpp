@@ -129,8 +129,11 @@ void MainWindow::on_action_Histogram_triggered()
     histWindow->setCoordinator(this->coordinator);
     histWindow->setModal(true);
     histWindow->setHistogram(data);
+    histWindow->setMasksList(this->coordinator->getMaskList());
     histWindow->show();
 }
+
+
 
 void MainWindow::on_prueba_clicked()
 {
@@ -211,3 +214,5 @@ void MainWindow::on_action_Algorithm_triggered()
         this->ui->widgetAlgorithm->setVisible(false);
     }
 }
+
+

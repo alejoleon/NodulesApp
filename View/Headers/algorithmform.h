@@ -87,10 +87,7 @@ private slots:
      */
     void on_pb_viewMediastinum_clicked();
     
-    
-    
-    
-    
+
     
     /**
      * @brief on_rb_ClipMedYes_clicked Acción que debe realizarse al momento de seleccionar la opcion YES en el cuadro de parámetros del mediastino.

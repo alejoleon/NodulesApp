@@ -27,7 +27,8 @@ typedef itk::Image< PixelType, DimensionBM > ImageType;
 typedef unsigned char   PixelBinaryType;
 typedef itk::Image<PixelBinaryType, DimensionBM> ImageBinaryType;
 
-
+//Definicion del mapa de distancias.
+typedef itk::Image<float, DimensionBM> ImageFloatType;
 
 //Clases del proyecto:
 #include "ImageProcessingUtils.h"
@@ -48,6 +49,7 @@ public:
 	void peripheralVessel (ImageType::Pointer image ,ImageBinaryType::Pointer mask,ImageBinaryType::Pointer &imageOut);
 	void createLungsRegion (ImageType::Pointer imageIn, ImageBinaryType::Pointer &lungsRegion, float seeds[], int min, int max);
     void createMediastinumRegion(ImageType::Pointer image, ImageBinaryType::Pointer regionMask , ImageBinaryType::Pointer &mediastinumRegion, int upperThreshold);
+    void createExclusionRegionLungs (ImageType::Pointer image, ImageFloatType::Pointer distanceMap , ImageBinaryType::Pointer &output, signed short threshold, double pixelLimit);
 
 };
 

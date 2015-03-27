@@ -681,8 +681,17 @@ vector<int> ImageProcessingUtils::histogramFilterToVector(ImageToHistogramFilter
     {
         hist.push_back(histogram->GetFrequency(i));
     }
-
     return hist;
 }
 
+vector<int> ImageProcessingUtils::histogramFilterToVector(MaskedImageToHistogramFilterType::Pointer image){
+    vector<int> hist;
+
+    MaskedImageToHistogramFilterType::HistogramType* histogram = image->GetOutput();
+    for(unsigned int i = 0; i < histogram->GetSize()[0]; ++i)
+    {
+        hist.push_back(histogram->GetFrequency(i));
+    }
+    return hist;
+}
 

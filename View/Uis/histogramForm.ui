@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>480</height>
+    <width>551</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,96 +19,184 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
-    <widget class="QVTKWidget" name="qvtkhistogram" native="true"/>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QVTKWidget" name="qvtkhistogram" native="true"/>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="gb_chartType">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>60</height>
-      </size>
+    <widget class="QFrame" name="frame_3">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="title">
-      <string>Chart Type</string>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QRadioButton" name="rb_stacked">
-        <property name="text">
-         <string>Stacked</string>
+       <widget class="QGroupBox" name="gb_chartType">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>60</height>
+         </size>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="rb_line">
-        <property name="text">
-         <string>Line</string>
+        <property name="title">
+         <string>Chart Type</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="rb_bar">
-        <property name="text">
-         <string>Bar</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="rb_points">
-        <property name="text">
-         <string>Point</string>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QRadioButton" name="rb_stacked">
+           <property name="text">
+            <string>Stacked</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rb_line">
+           <property name="text">
+            <string>Line</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rb_bar">
+           <property name="text">
+            <string>Bar</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rb_points">
+           <property name="text">
+            <string>Point</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <widget class="QLabel" name="lb_MinHistogram">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#0000ff;&quot;&gt;Minimum Value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <widget class="QFrame" name="frame_2">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
        </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="lb_MinHistogram">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#0000ff;&quot;&gt;Minimum Value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QSlider" name="minSliderHUValue">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="minBoxHUValues"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="lb_MaxHistogram">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#0000ff;&quot;&gt;Maximum Value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QSlider" name="maxSliderHUValue">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="maxBoxHUValues"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QSlider" name="minSliderHUValue">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="minBoxHUValues"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QLabel" name="lb_MaxHistogram">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#0000ff;&quot;&gt;Maximum Value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <widget class="QFrame" name="frame_4">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
        </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Use a mask</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QRadioButton" name="rb_yesMask">
+             <property name="text">
+              <string>Yes</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rb_noMask">
+             <property name="text">
+              <string>No</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lb_SelectMask">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string>Select a Mask</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cb_masks"/>
+        </item>
+       </layout>
       </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSlider" name="maxSliderHUValue">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="maxBoxHUValues"/>
-       </item>
-      </layout>
      </item>
     </layout>
    </item>
@@ -152,9 +240,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>qvtkhistogram</zorder>
-  <zorder>gb_chartType</zorder>
-  <zorder></zorder>
  </widget>
  <customwidgets>
   <customwidget>

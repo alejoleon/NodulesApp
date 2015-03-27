@@ -183,6 +183,10 @@
    </property>
   </action>
   <action name="action_Transversal_view">
+   <property name="icon">
+    <iconset resource="../../Resources/resources.qrc">
+     <normaloff>:/Icons/Icons/VistaTransversal.png</normaloff>:/Icons/Icons/VistaTransversal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Transversal view</string>
    </property>
@@ -193,13 +197,17 @@
   <action name="actionCoronal_view">
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
-     <normaloff>:/Icons/Icons/vista coronal.jpg</normaloff>:/Icons/Icons/vista coronal.jpg</iconset>
+     <normaloff>:/Icons/Icons/VistaCoronal.png</normaloff>:/Icons/Icons/VistaCoronal.png</iconset>
    </property>
    <property name="text">
     <string>Coronal view</string>
    </property>
   </action>
   <action name="action_Sagital_view">
+   <property name="icon">
+    <iconset resource="../../Resources/resources.qrc">
+     <normaloff>:/Icons/Icons/VistaSagital.png</normaloff>:/Icons/Icons/VistaSagital.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Sagital view</string>
    </property>
